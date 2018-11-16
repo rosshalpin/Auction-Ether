@@ -46,6 +46,11 @@ function AuctionCard() {
     );
 };
 
+function base64_encode(file) {
+    var bitmap = fs.readFileSync(file);
+    return new Buffer(bitmap).toString('base64');
+}
+
 const web3 = new Web3(window.ethereum);
 
 class App extends Component {
@@ -58,33 +63,17 @@ class App extends Component {
 		
 	}
 	
-	payForAuction = async () => {
+	deployContract = async () => {
 		if (typeof web3 !== 'undefined') {
 			await window.ethereum.enable();
 			
 			const accounts = await web3.eth.getAccounts();
 			console.log(accounts[0])
 			
-			web3.eth.sendTransaction({
-				from: accounts[0],
-				to: '0x7657bC53995C2B55104E389a06d28f1Bf1237AA0',
-				//value: '1000000000000000'
-				value: web3.utils.toWei('0.0001', 'ether')
-			})
-			.on('transactionHash', function(hash){
-				
-			})
-			.on('receipt', function(receipt){
-				
-			})
-			.on('confirmation', function(confirmationNumber, receipt){
-				console.log(confirmationNumber, receipt)
-				this.addNewCard();
-			})
-			.on('error', console.error); // If a out of gas error, the second parameter is the receipt.
-			
+			/*
 			web3.eth.getTransaction('0x70bc6d1483bc85db08be633c4d3a6e7e94354f5546033ed91e17e1eb485a6083')
 			.then(console.log);
+			*/
 			
 		}else {
 			console.log('You must use metamask to interact with this website')
