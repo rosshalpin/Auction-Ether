@@ -3,7 +3,7 @@ pragma solidity ^0.4.25;
 /// @author Ross Halpin
 /// @notice This contract is for the creation of an Auction
 contract Auction {
-    address public auctionManager;
+    address public auctionManager = 0x7657bC53995C2B55104E389a06d28f1Bf1237AA0;
     address public auctionSeller;
     address public highestBidder;
     uint public highestBid;
@@ -23,11 +23,11 @@ contract Auction {
     /// @param _auctionSeller Address of auction seller
     constructor(uint _reserveValue, uint _minIncrementValue, uint _auctionDuration, address _auctionSeller, string _ipfsHash) public payable {
         require(msg.value > 0.001 ether, "You must pay the advertisement fee");
+        auctionManager.transfer(msg.value);
         reserveValue = _reserveValue * 1 ether; // Converting ether base 10 value to wei.
         minIncrementValue = _minIncrementValue * 1 ether;
         auctionBegin = now; // 'now' is an alias for block.timestamp(Block time or Time when mined)
         auctionEnd = auctionBegin + _auctionDuration;
-        auctionManager = 0x7657bC53995C2B55104E389a06d28f1Bf1237AA0;
         auctionSeller = _auctionSeller;
         auctionHasEnded = false;
         ipfsHash = _ipfsHash;

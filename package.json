@@ -6,6 +6,7 @@
     "@material-ui/core": "^3.4.0",
     "@material-ui/icons": "^3.0.1",
     "firebase": "^5.5.7",
+    "ipfs-api": "^26.1.2",
     "react": "^16.5.2",
     "react-dom": "^16.6.1",
     "react-scripts": "2.0.5",

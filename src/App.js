@@ -8,9 +8,10 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import { AddCircle } from '@material-ui/icons';
+import Modal from './uploadModal.js';
 //const message = require('./deploy');
-const fs = require('fs');
+
+window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 
 function AuctionCard() {
     let cardClassName = "Auction-card";
@@ -26,10 +27,10 @@ function AuctionCard() {
                     title="Contemplative Reptile"
                 />
                 <CardContent>
-                    <Typography gutterBottom variant="h5" component="h2">
+                    <Typography gutterBottom variant="h5" >
                         House
                     </Typography>
-                    <Typography component="p">
+                    <Typography >
                         House details
                     </Typography>
                 </CardContent>
@@ -45,11 +46,6 @@ function AuctionCard() {
         </Card>
     );
 };
-
-function base64_encode(file) {
-    var bitmap = fs.readFileSync(file);
-    return new Buffer(bitmap).toString('base64');
-}
 
 const web3 = new Web3(window.ethereum);
 
@@ -86,25 +82,14 @@ class App extends Component {
 		let newArray = this.state.cardArray.concat([nCard]);
 		this.setState({cardArray: newArray});
 	};
-	
-	cardAdder  = () => { 
-		let cardClassName = "Auction-card";
-		return(
-			<Card className={cardClassName} onClick={() => {this.addNewCard()}} >
-				<CardActionArea style={{height: '280px'}} >
-						<AddCircle style={{fontSize: '64px', color: '#bcbcbc'}} ></AddCircle>
-				</CardActionArea>
-			</Card>
-		);
-	};
     
     render() {
         return (
             <div className="App">
-                {this.cardAdder()}
                 {this.state.cardArray.map((card, x) => {
                     return <AuctionCard key={"card"+x}/>;
                 })}
+				<Modal/>
             </div>
         );  
     }

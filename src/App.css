@@ -32,11 +32,10 @@
 }
 
 .Auction-card {
- width: 300px;
- max-width: 300px;
- display: inline-block;
- margin: 10px;
- float: left;
- min-height: 280px;
- 
+	width: 300px;
+	max-width: 300px;
+	display: inline-block;
+	margin: 10px;
+	float: left;
+	min-height: 280px;
 }
