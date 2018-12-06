@@ -13,7 +13,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Grid from '@material-ui/core/Grid';
 import green from '@material-ui/core/colors/green';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import classNames from 'classnames';
+import ipfs from './ipfs';
 
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 function getModalStyle() {
@@ -131,13 +131,15 @@ const furnished = [
 class SimpleModal extends React.Component {
 	state = {
 		open: false,
+		chars_left: 180,
+		desc: '',
+		fileList: [],
 		beds: 'One Bed',
 		rent_type: 'House',
-		chars_left: 180,
-		fileList: [],
 		amount: '',
 		baths: 'One Bath',
 		furnished: 'Furnished',
+		images: [],
 	};
 	
 	handleChange = name => event => {
@@ -162,9 +164,11 @@ class SimpleModal extends React.Component {
 			event.target.value = event.target.value.slice(0, 180);
 		}else{
 			this.setState({ chars_left: charLeft});
-			console.log(charLeft)
+			//console.log(charLeft)
 		}
-	}
+		this.setState({ desc: event.target.value});
+		//console.log(event.target.value)
+	};
 	
 	handleUpload = async (event) => {
 		const files = event.target.files;
@@ -174,6 +178,7 @@ class SimpleModal extends React.Component {
 				const fileContents = await base_64(file)
 				files_64.push(fileContents);
 			}
+			this.setState({ images: files_64 });
 		} catch (e) {
 			console.warn(e.message)
 		}
@@ -183,7 +188,25 @@ class SimpleModal extends React.Component {
 		}
 		this.setState({ fileList: fileNames });
 		console.log(this.state.fileList);
-	}
+	};
+	
+	handleDeploy = async () => {
+		var details = {
+			desc: this.state.desc,
+			beds: this.state.beds,
+			baths: this.state.baths,
+			rent_type: this.state.rent_type,
+			amount: this.state.amount,
+			furnished: this.state.furnished,
+			images: this.state.images,
+		};
+		console.log(JSON.stringify(details));
+		const fbuffer = await Buffer.from(JSON.stringify(details));
+		await ipfs.add(fbuffer, (err, ipfsHash) => {
+			console.log(err,ipfsHash);
+		})
+			
+	};
 
 	cardAdder = () => { 
 		let cardClassName = "Auction-card";
@@ -326,8 +349,8 @@ class SimpleModal extends React.Component {
 							</Grid>
 							<Grid  item >
 								<MuiThemeProvider theme={green_theme}>
-									<Button color="primary" variant="contained" component="span" className={classes.button}>
-										Deploy Auction Contract
+									<Button onClick={this.handleDeploy} color="primary" variant="contained" component="span" className={classes.button}>
+										Deploy
 									</Button>
 								</MuiThemeProvider>
 							</Grid>

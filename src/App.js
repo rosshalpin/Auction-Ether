@@ -11,6 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import Modal from './uploadModal.js';
 //const message = require('./deploy');
 
+
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 
 function AuctionCard() {
