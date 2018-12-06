@@ -2,10 +2,16 @@ pragma solidity ^0.4.25;
 /// @title Auction Contract
 /// @author Ross Halpin
 /// @notice This contract is for the creation of an Auction
+
+interface Ledger{
+    function addAddress(address auctionAddress) external;
+}
+    
 contract Auction {
-    address public auctionManager = 0x7657bC53995C2B55104E389a06d28f1Bf1237AA0;
+    address public auctionManager;
     address public auctionSeller;
     address public highestBidder;
+    Ledger public auctionLedger;
     uint public highestBid;
     mapping(address => uint) internal balanceOf; // Contains the current balance of un-withdrawn bid at address
     uint public reserveValue;
@@ -16,22 +22,26 @@ contract Auction {
     string public ipfsHash;
     address[] public bidderLog; // Address at bidderLog[N] will have a corresponding bid value at bidLog[N]
     uint[] public bidLog; // Solidity doesnt support multiple data types in arrays, must use two separate arrays to log bids
+    
     /// @notice This constructor initialises the parameters of the auction as set by the manager
     /// @param _reserveValue This is the reserve value of the auction
     /// @param _minIncrementValue This is the minimum value that bids can be incremented
     /// @param _auctionDuration Duration of auction in seconds(Unix time)
-    /// @param _auctionSeller Address of auction seller
-    constructor(uint _reserveValue, uint _minIncrementValue, uint _auctionDuration, address _auctionSeller, string _ipfsHash) public payable {
-        require(msg.value > 0.001 ether, "You must pay the advertisement fee");
+    constructor(uint _reserveValue, uint _minIncrementValue, uint _auctionDuration, string _ipfsHash) public payable {
+        require(msg.value > 0.0001 ether, "You must pay the advertisement fee");
+        auctionManager = 0xe3E36c15027Be15AEaBF2a71F6920a9429aa8937;
         auctionManager.transfer(msg.value);
         reserveValue = _reserveValue * 1 ether; // Converting ether base 10 value to wei.
         minIncrementValue = _minIncrementValue * 1 ether;
         auctionBegin = now; // 'now' is an alias for block.timestamp(Block time or Time when mined)
         auctionEnd = auctionBegin + _auctionDuration;
-        auctionSeller = _auctionSeller;
+        auctionSeller = msg.sender;
         auctionHasEnded = false;
         ipfsHash = _ipfsHash;
+        auctionLedger = Ledger(0xf98762E76DB3D055a1b5Cc57E34997C07be61571);
+        auctionLedger.addAddress(this);
     }
+    
     /// @notice To withdraw funds when outbid
     /// @dev Withdrawal pattern(balance set to zero before withdrawal) used here to prevent re-entrency attack
     /// 'external' saves gas over using public, function is only ever called externally
@@ -41,6 +51,7 @@ contract Auction {
         balanceOf[msg.sender] = 0;  // Balance must be set to zero before transfer
         msg.sender.transfer(amount);
     }
+    
     /// @notice To bid on auction, requires ether payment
     /// @dev 'payable' Function requires ether payment
     function placeBid() external payable {
@@ -54,6 +65,7 @@ contract Auction {
         bidderLog.push(highestBidder); // Log bidder and the value below.
         bidLog.push(highestBid);
     }
+    
     /// @notice For manager to end the auction
     /// @dev Note, the 'now' in the constructor was the blocktime of the transaction containing the contract.
     /// The 'now' in endAuction() is the blocktime of the transaction containing this function call.

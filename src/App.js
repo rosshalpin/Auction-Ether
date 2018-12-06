@@ -11,7 +11,6 @@ import Typography from '@material-ui/core/Typography';
 import Modal from './uploadModal.js';
 //const message = require('./deploy');
 
-
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 
 function AuctionCard() {
@@ -60,22 +59,21 @@ class App extends Component {
 		
 	}
 	
-	deployContract = async () => {
+	enableWeb3 = async () => {
 		if (typeof web3 !== 'undefined') {
-			await window.ethereum.enable();
-			
-			const accounts = await web3.eth.getAccounts();
-			console.log(accounts[0])
-			
-			/*
-			web3.eth.getTransaction('0x70bc6d1483bc85db08be633c4d3a6e7e94354f5546033ed91e17e1eb485a6083')
-			.then(console.log);
-			*/
-			
+			try{
+				await window.ethereum.enable();
+			}catch(e){
+				console.log('You must enable connection to use this app')
+				await window.ethereum.enable();
+			}
+			return web3;
+		} else if (window.web3) {
+			return window.web3;
 		}else {
 			console.log('You must use metamask to interact with this website')
+			return null;
 		}
-		
 	};
 	
 	addNewCard = () => {
@@ -90,7 +88,7 @@ class App extends Component {
                 {this.state.cardArray.map((card, x) => {
                     return <AuctionCard key={"card"+x}/>;
                 })}
-				<Modal/>
+				<Modal web3={this.enableWeb3()}/>
             </div>
         );  
     }

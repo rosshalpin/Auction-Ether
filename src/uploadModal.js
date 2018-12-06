@@ -14,6 +14,8 @@ import Grid from '@material-ui/core/Grid';
 import green from '@material-ui/core/colors/green';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import ipfs from './ipfs';
+var fs = require('fs');
+
 
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 function getModalStyle() {
@@ -131,15 +133,16 @@ const furnished = [
 class SimpleModal extends React.Component {
 	state = {
 		open: false,
-		chars_left: 180,
-		desc: '',
-		fileList: [],
 		beds: 'One Bed',
 		rent_type: 'House',
+		desc: '',
+		chars_left: 180,
+		fileList: [],
 		amount: '',
 		baths: 'One Bath',
 		furnished: 'Furnished',
 		images: [],
+		ipfs: '',
 	};
 	
 	handleChange = name => event => {
@@ -153,7 +156,19 @@ class SimpleModal extends React.Component {
 	};
 
 	handleClose = () => {
-		this.setState({ open: false });
+		this.setState({
+			open: false,
+			beds: 'One Bed',
+			rent_type: 'House',
+			desc: '',
+			chars_left: 180,
+			fileList: [],
+			amount: '',
+			baths: 'One Bath',
+			furnished: 'Furnished',
+			images: [],
+			ipfsHash: '',
+		});
 	};
 	
 	handleWordCount = (event) => {
@@ -164,11 +179,9 @@ class SimpleModal extends React.Component {
 			event.target.value = event.target.value.slice(0, 180);
 		}else{
 			this.setState({ chars_left: charLeft});
-			//console.log(charLeft)
 		}
 		this.setState({ desc: event.target.value});
-		//console.log(event.target.value)
-	};
+	}
 	
 	handleUpload = async (event) => {
 		const files = event.target.files;
@@ -178,7 +191,6 @@ class SimpleModal extends React.Component {
 				const fileContents = await base_64(file)
 				files_64.push(fileContents);
 			}
-			this.setState({ images: files_64 });
 		} catch (e) {
 			console.warn(e.message)
 		}
@@ -187,26 +199,42 @@ class SimpleModal extends React.Component {
 			fileNames.push(f.name)
 		}
 		this.setState({ fileList: fileNames });
+		this.setState({ images: files_64 })
 		console.log(this.state.fileList);
-	};
-	
+	}
+
 	handleDeploy = async () => {
-		var details = {
-			desc: this.state.desc,
+		const details = {
 			beds: this.state.beds,
-			baths: this.state.baths,
 			rent_type: this.state.rent_type,
+			desc: this.state.desc,
 			amount: this.state.amount,
+			baths: this.state.baths,
 			furnished: this.state.furnished,
 			images: this.state.images,
-		};
-		console.log(JSON.stringify(details));
-		const fbuffer = await Buffer.from(JSON.stringify(details));
-		await ipfs.add(fbuffer, (err, ipfsHash) => {
+		}
+		const buffer = await Buffer.from(JSON.stringify(details));
+		/*
+		await ipfs.add(buffer, (err, ipfsHash) => {
 			console.log(err,ipfsHash);
+			this.setState({ ipfsHash: ipfsHash[0].hash });
 		})
-			
-	};
+		*/
+		const web3 = await this.props.web3;
+
+		fs.readFile('./contract/interface.txt', 'utf8', function(err, contents) {
+			console.log(err);
+			console.log(contents);
+		});
+
+		/*
+		const result = await new web3.eth.Contract(JSON.parse(interf))
+      		.deploy({ data: '0x'+ bytecode}) //, arguments: [] })
+      		.send({ gas: '1000000', from: accounts[0] });
+
+		console.log('Contract deployed to', result.options.address);
+		*/
+	}
 
 	cardAdder = () => { 
 		let cardClassName = "Auction-card";
