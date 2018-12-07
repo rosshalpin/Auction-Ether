@@ -1,53 +1,13 @@
 import React, { Component } from 'react';
 import './App.css';
 import Web3 from 'web3';
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
 import Modal from './uploadModal.js';
+import AuctionCard from './AuctionCard.js';
 import contract from './contract';
+
 const request = require('request');
-//const message = require('./deploy');
 
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
-
-function AuctionCard() {
-    let cardClassName = "Auction-card";
-    return(
-        <Card className={cardClassName}>
-            <CardActionArea>
-                <CardMedia
-                    component="img"
-                    alt="Contemplative Reptile"
-                    className="media"
-                    height="140"
-                    image="images/house.png"
-                    title="Contemplative Reptile"
-                />
-                <CardContent>
-                    <Typography gutterBottom variant="h5" >
-                        House
-                    </Typography>
-                    <Typography >
-                        House details
-                    </Typography>
-                </CardContent>
-            </CardActionArea>
-            <CardActions>
-                <Button size="small" color="primary">
-                    Share
-                </Button>
-                <Button size="small" color="primary">
-                    Learn More
-                </Button>
-            </CardActions>
-        </Card>
-    );
-};
 
 const web3 = new Web3(window.ethereum);
 
@@ -83,6 +43,23 @@ class App extends Component {
 		}
     };
 	
+	handleGetIPFS = async (auctionMediaURL, address) => {
+		await request(auctionMediaURL, { json: true }, (err, res, body) => {
+			if (err) { 
+				return console.log(err); 
+			} else {
+				var nAuction = {
+					media: body,
+					address: address,
+				};
+				var newArray = this.state.auctions;
+				newArray.push(nAuction);
+				this.setState({auctions: newArray});
+			}
+		});
+		
+	}
+	
 	handleContracts = async () => {
 		try{
 			var web3_ = this.state.web3;
@@ -92,51 +69,39 @@ class App extends Component {
 			.then(function(result){
 				return  result;
 			});
-			this.setState({auctions: auctions});
-			console.log(this.state.auctions);
+			for(var address of auctions)	{
+				var auctionAbi = contract.interf;
+				var auction = new web3_.eth.Contract(JSON.parse(auctionAbi), address);
+				var auctionIPFS = await auction.methods.ipfsHash().call({from: web3_.eth.getAccounts[0]})
+					.then(function(result){
+						return  result;
+					});
+				var auctionMediaURL = 'https://gateway.ipfs.io/ipfs/'+auctionIPFS;
+				await this.handleGetIPFS(auctionMediaURL, address);
+			}
+			
 		}catch(e){
 			console.log(e)
 		}
-		
-		for(var auctionAddress of this.state.auctions){
-			this.handleAuction(auctionAddress);
-		}
-    }
-	
-	handleAuction = async (address) => {
-		var web3_ = this.state.web3;
-		var auctionAbi = contract.interf;
-		var auction = new web3_.eth.Contract(JSON.parse(auctionAbi), address);
-		var auctionIPFS = await auction.methods.ipfsHash().call({from: web3_.eth.getAccounts[0]})
-			.then(function(result){
-				return  result;
-			});
-		console.log(auctionIPFS);
-		
-		var auctionMediaURL = 'https://gateway.ipfs.io/ipfs/'+auctionIPFS;
-		
-		request(auctionMediaURL, { json: true }, (err, res, body) => {
-			if (err) { return console.log(err); }
-			console.log(body);
-		});
 	}
-	
-	addNewCard = () => {
-		var nCard = new AuctionCard();
-		let newArray = this.state.cardArray.concat([nCard]);
-		this.setState({cardArray: newArray});
-	};
     
     render() {
         return (
             <div className="App">
-				<Modal web3={this.state.web3} contract={contract}/>
-                {this.state.cardArray.map((card, x) => {
-                    return <AuctionCard key={"card"+x}/>;
-                })}
-				
+				<div style={{padding: '15px'}}>
+					<Modal web3={this.state.web3} contract={contract}/>
+					{this.state.auctions.map((content, x) => {
+						return <AuctionCard data={content} key={"card"+x} />
+					})}
+				</div>
             </div>
         );  
     }
 }
 export default App;
+
+/*
+{this.state.cardArray.map((card, x) => {
+	return <this.AuctionCard key={"card"+x}/>;
+})}
+*/
