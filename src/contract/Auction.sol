@@ -38,7 +38,7 @@ contract Auction {
         auctionSeller = msg.sender;
         auctionHasEnded = false;
         ipfsHash = _ipfsHash;
-        auctionLedger = Ledger(0xf98762E76DB3D055a1b5Cc57E34997C07be61571);
+        auctionLedger = Ledger(0x3b6ec64782a4030d0581983b32773d8a8b5271c2);
         auctionLedger.addAddress(this);
     }
     

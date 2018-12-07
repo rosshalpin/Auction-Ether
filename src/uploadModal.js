@@ -14,8 +14,7 @@ import Grid from '@material-ui/core/Grid';
 import green from '@material-ui/core/colors/green';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import ipfs from './ipfs';
-var fs = require('fs');
-
+import contract from './contract';
 
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 function getModalStyle() {
@@ -143,6 +142,7 @@ class SimpleModal extends React.Component {
 		furnished: 'Furnished',
 		images: [],
 		ipfs: '',
+		txHash: '',
 	};
 	
 	handleChange = name => event => {
@@ -203,6 +203,17 @@ class SimpleModal extends React.Component {
 		console.log(this.state.fileList);
 	}
 
+	deployContract = async () => {
+		const web3 = await this.props.web3;
+		const accounts = await web3.eth.getAccounts();
+		const { interf, bytecode} = contract;
+		const result = await new web3.eth.Contract(JSON.parse(interf))
+			.deploy({ data: '0x'+ bytecode, arguments: [1,1,1000,this.state.ipfsHash] })
+			.send({ gas: '1000000', value: web3.utils.toWei('0.0002', 'ether'), from: accounts[0] });
+		console.log('Contract deployed to', result.options.address);
+		this.setState({ txHash: result.options.address});
+	}
+
 	handleDeploy = async () => {
 		const details = {
 			beds: this.state.beds,
@@ -214,26 +225,16 @@ class SimpleModal extends React.Component {
 			images: this.state.images,
 		}
 		const buffer = await Buffer.from(JSON.stringify(details));
-		/*
 		await ipfs.add(buffer, (err, ipfsHash) => {
 			console.log(err,ipfsHash);
-			this.setState({ ipfsHash: ipfsHash[0].hash });
+			if(err){
+				console.log(err)
+			}else{
+				this.setState({ ipfsHash: ipfsHash[0].hash });
+				console.log(typeof this.state.ipfsHash);
+				this.deployContract();
+			}
 		})
-		*/
-		const web3 = await this.props.web3;
-
-		fs.readFile('./contract/interface.txt', 'utf8', function(err, contents) {
-			console.log(err);
-			console.log(contents);
-		});
-
-		/*
-		const result = await new web3.eth.Contract(JSON.parse(interf))
-      		.deploy({ data: '0x'+ bytecode}) //, arguments: [] })
-      		.send({ gas: '1000000', from: accounts[0] });
-
-		console.log('Contract deployed to', result.options.address);
-		*/
 	}
 
 	cardAdder = () => { 
