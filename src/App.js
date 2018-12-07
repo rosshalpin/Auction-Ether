@@ -13,6 +13,8 @@ import Modal from './uploadModal.js';
 
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 
+const ledgerAbi = '[{"constant":false,"inputs":[{"name":"auctionAddress","type":"address"}],"name":"addAddress","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"getAuctions","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"}]';
+
 function AuctionCard() {
     let cardClassName = "Auction-card";
     return(
@@ -52,13 +54,30 @@ const web3 = new Web3(window.ethereum);
 class App extends Component {
 	
 	state = {
-		cardArray: [],
+        cardArray: [],
+        web3: null,
+		auctions: [],
 	};
 	
 	async componentDidMount() {
-		
-	}
+		this.enableWeb3();
+    }
 	
+	handleContracts = async () => {
+		try{
+			var web3_ = this.state.web3;
+			var ledger = new web3_.eth.Contract(JSON.parse(ledgerAbi), '0x78cDF669DE8fF8b72e6B1843bE8637dE1aCc9bc9');
+			var auctions = await ledger.methods.getAuctions().call({from: web3_.eth.getAccounts[0]})
+			.then(function(result){
+				return  result;
+			});
+			this.setState({auctions: auctions});
+			console.log(this.state.auctions);
+		}catch(e){
+			console.log(e)
+		}
+    }
+    
 	enableWeb3 = async () => {
 		if (typeof web3 !== 'undefined') {
 			try{
@@ -66,15 +85,17 @@ class App extends Component {
 			}catch(e){
 				console.log('You must enable connection to use this app')
 				await window.ethereum.enable();
-			}
-			return web3;
+            }
+            this.setState({web3: web3});
+            this.handleContracts();
 		} else if (window.web3) {
-			return window.web3;
+            this.setState({web3: window.web3});
+            this.handleContracts();
 		}else {
 			console.log('You must use metamask to interact with this website')
-			return null;
+			this.setState({web3: null});
 		}
-	};
+    };
 	
 	addNewCard = () => {
 		var nCard = new AuctionCard();
@@ -88,7 +109,7 @@ class App extends Component {
                 {this.state.cardArray.map((card, x) => {
                     return <AuctionCard key={"card"+x}/>;
                 })}
-				<Modal web3={this.enableWeb3()}/>
+				<Modal web3={this.state.web3}/>
             </div>
         );  
     }
