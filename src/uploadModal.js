@@ -14,7 +14,6 @@ import Grid from '@material-ui/core/Grid';
 import green from '@material-ui/core/colors/green';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import ipfs from './ipfs';
-import contract from './contract';
 
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 function getModalStyle() {
@@ -48,6 +47,8 @@ const styles = theme => ({
 		backgroundColor: theme.palette.background.paper,
 		boxShadow: theme.shadows[5],
 		padding: theme.spacing.unit * 4,
+		borderRadius: 5,
+		outline: 'none',
 	},
 	root: {
 		flexGrow: 1,
@@ -203,17 +204,6 @@ class SimpleModal extends React.Component {
 		console.log(this.state.fileList);
 	}
 
-	deployContract = async () => {
-		const web3 = await this.props.web3;
-		const accounts = await web3.eth.getAccounts();
-		const { interf, bytecode} = contract;
-		const result = await new web3.eth.Contract(JSON.parse(interf))
-			.deploy({ data: '0x'+ bytecode, arguments: [1,1,1000,this.state.ipfsHash] })
-			.send({ gas: '1000000', value: web3.utils.toWei('0.0002', 'ether'), from: accounts[0] });
-		console.log('Contract deployed to', result.options.address);
-		this.setState({ txHash: result.options.address});
-	}
-
 	handleDeploy = async () => {
 		const details = {
 			beds: this.state.beds,
@@ -235,6 +225,17 @@ class SimpleModal extends React.Component {
 				this.deployContract();
 			}
 		})
+	}
+	
+	deployContract = async () => {
+		const web3 = await this.props.web3;
+		const accounts = await web3.eth.getAccounts();
+		const { interf, bytecode} = this.props.contract;
+		const result = await new web3.eth.Contract(JSON.parse(interf))
+			.deploy({ data: '0x'+ bytecode, arguments: [1,1,1000,this.state.ipfsHash] })
+			.send({ gas: '1000000', value: web3.utils.toWei('0.0002', 'ether'), from: accounts[0] });
+		console.log('Contract deployed to', result.options.address);
+		this.setState({ txHash: result.options.address});
 	}
 
 	cardAdder = () => { 
@@ -321,7 +322,7 @@ class SimpleModal extends React.Component {
 							</Grid>
 							
 						</Grid>
-						<Grid container justify="center" spacing={16} className={classes.root}>
+						<Grid container justify="center" spacing={40} className={classes.root}>
 							<Grid item >
 								{this.TextField_(baths, "Bathrooms", "baths")}
 							</Grid>

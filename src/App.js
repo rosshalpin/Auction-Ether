@@ -9,11 +9,11 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Modal from './uploadModal.js';
+import contract from './contract';
+const request = require('request');
 //const message = require('./deploy');
 
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
-
-const ledgerAbi = '[{"constant":false,"inputs":[{"name":"auctionAddress","type":"address"}],"name":"addAddress","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"getAuctions","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"}]';
 
 function AuctionCard() {
     let cardClassName = "Auction-card";
@@ -60,22 +60,8 @@ class App extends Component {
 	};
 	
 	async componentDidMount() {
-		this.enableWeb3();
-    }
-	
-	handleContracts = async () => {
-		try{
-			var web3_ = this.state.web3;
-			var ledger = new web3_.eth.Contract(JSON.parse(ledgerAbi), '0x78cDF669DE8fF8b72e6B1843bE8637dE1aCc9bc9');
-			var auctions = await ledger.methods.getAuctions().call({from: web3_.eth.getAccounts[0]})
-			.then(function(result){
-				return  result;
-			});
-			this.setState({auctions: auctions});
-			console.log(this.state.auctions);
-		}catch(e){
-			console.log(e)
-		}
+		await this.enableWeb3();
+		await this.handleContracts();
     }
     
 	enableWeb3 = async () => {
@@ -87,15 +73,53 @@ class App extends Component {
 				await window.ethereum.enable();
             }
             this.setState({web3: web3});
-            this.handleContracts();
+
 		} else if (window.web3) {
             this.setState({web3: window.web3});
-            this.handleContracts();
+
 		}else {
 			console.log('You must use metamask to interact with this website')
 			this.setState({web3: null});
 		}
     };
+	
+	handleContracts = async () => {
+		try{
+			var web3_ = this.state.web3;
+			var ledgerAbi = contract.ledger;
+			var ledger = new web3_.eth.Contract(JSON.parse(ledgerAbi), '0x78cDF669DE8fF8b72e6B1843bE8637dE1aCc9bc9');
+			var auctions = await ledger.methods.getAuctions().call({from: web3_.eth.getAccounts[0]})
+			.then(function(result){
+				return  result;
+			});
+			this.setState({auctions: auctions});
+			console.log(this.state.auctions);
+		}catch(e){
+			console.log(e)
+		}
+		
+		for(var auctionAddress of this.state.auctions){
+			this.handleAuction(auctionAddress);
+		}
+    }
+	
+	handleAuction = async (address) => {
+		var web3_ = this.state.web3;
+		var auctionAbi = contract.interf;
+		var auction = new web3_.eth.Contract(JSON.parse(auctionAbi), address);
+		var auctionIPFS = await auction.methods.ipfsHash().call({from: web3_.eth.getAccounts[0]})
+			.then(function(result){
+				return  result;
+			});
+		console.log(auctionIPFS);
+		
+		var auctionMediaURL = 'https://gateway.ipfs.io/ipfs/'+auctionIPFS;
+		
+		request(auctionMediaURL, { json: true }, (err, res, body) => {
+			if (err) { return console.log(err); }
+			console.log(body);
+		});
+	}
 	
 	addNewCard = () => {
 		var nCard = new AuctionCard();
@@ -106,10 +130,11 @@ class App extends Component {
     render() {
         return (
             <div className="App">
+				<Modal web3={this.state.web3} contract={contract}/>
                 {this.state.cardArray.map((card, x) => {
                     return <AuctionCard key={"card"+x}/>;
                 })}
-				<Modal web3={this.state.web3}/>
+				
             </div>
         );  
     }
