@@ -3,9 +3,6 @@ import { withStyles, MuiThemeProvider, createMuiTheme } from '@material-ui/core/
 import Typography from '@material-ui/core/Typography';
 import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import { AddCircle } from '@material-ui/icons';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 //import classNames from 'classnames';
@@ -237,19 +234,6 @@ class SimpleModal extends React.Component {
 		console.log('Contract deployed to', result.options.address);
 		this.setState({ txHash: result.options.address});
 	}
-
-	cardAdder = () => { 
-		let cardClassName = "Auction-card";
-		return(
-			<Tooltip title="Create Auction">
-			<Card className={cardClassName} onClick={this.handleOpen} >
-				<CardActionArea style={{height: '280px'}} >
-						<AddCircle style={{fontSize: '64px', color: '#bcbcbc'}} ></AddCircle>
-				</CardActionArea>
-			</Card>
-			</Tooltip>
-		);
-	};
 	
 	TextField_ = (obj, desc, id) => {
 		const { classes } = this.props;
@@ -283,7 +267,7 @@ class SimpleModal extends React.Component {
 		const { classes } = this.props;
 		return (
 		<div>
-			{this.cardAdder()}
+			<Button onClick={this.handleOpen} variant="outlined" color="inherit">Create Auction</Button>
 			<Modal
 				aria-labelledby="simple-modal-title"
 				aria-describedby="simple-modal-description"
@@ -377,7 +361,7 @@ class SimpleModal extends React.Component {
 									</label>
 								</div>
 							</Grid>
-							<Grid  item >
+							<Grid item>
 								<MuiThemeProvider theme={green_theme}>
 									<Button onClick={this.handleDeploy} color="primary" variant="contained" component="span" className={classes.button}>
 										Deploy

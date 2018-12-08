@@ -9,10 +9,7 @@ body {
  
 }
 html{
-	background: rgb(9,100,121);
-	background: -moz-linear-gradient(125deg, rgba(9,100,121,1) 0%, rgba(0,212,255,1) 100%);
-	background: -webkit-linear-gradient(125deg, rgba(9,100,121,1) 0%, rgba(0,212,255,1) 100%);
-	background: linear-gradient(125deg, rgba(9,100,121,1) 0%, rgba(0,212,255,1) 100%);
+
 	background-repeat: no-repeat;
     background-attachment: fixed;
 	
