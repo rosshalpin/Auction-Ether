@@ -6,6 +6,7 @@ import contract from "./contract";
 import AppBar from "./AppBar";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
 
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 
@@ -131,10 +132,10 @@ class App extends Component {
         <CssBaseline />
         <div className="App">
           <AppBar web3={web3} contract={contract} sort={this.handleSort} />
-          <div style={{ padding: "15px", marginTop: "60px" }}>
+          <Grid style={{ padding: "15px", marginTop: "60px" }} container justify="center" spacing={16}>
             {this.state.auctions.map((content, x) => <AuctionCard key={"card" + x} data={content} ex={this.state.exchange} />
             )}
-          </div>
+          </Grid>
         </div>
       </React.Fragment>
     );

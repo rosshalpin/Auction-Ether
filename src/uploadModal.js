@@ -143,7 +143,8 @@ class SimpleModal extends React.Component {
 		images: [],
 		ipfs: '',
 		txHash: [],
-    color: 'green'
+    color: 'green',
+    disableButton: false
 	};
 	
 	handleChange = name => event => {
@@ -170,7 +171,8 @@ class SimpleModal extends React.Component {
 			images: [],
 			ipfs: '',
 			txHash: [],
-      color: 'green'
+      color: 'green',
+      disableButton: false
 		});
 	};
 	
@@ -210,6 +212,7 @@ class SimpleModal extends React.Component {
 	}
 
 	handleDeploy = async () => {
+    this.state.disableButton = true;
 		const details = {
 			beds: this.state.beds,
 			rent_type: this.state.rent_type,
@@ -299,7 +302,7 @@ class SimpleModal extends React.Component {
 								Create new Auction
 							</Typography>
 						</Grid>
-						<Grid container justify="center" className={classes.root} spacing={16}>
+						<Grid container style={{margin: '9px'}} justify="flex-start" className={classes.root} spacing={16}>
 							<Grid item >
 								{this.TextField_(beds, "How many beds", "beds")}
 							</Grid>
@@ -327,7 +330,7 @@ class SimpleModal extends React.Component {
 							</Grid>
 							
 						</Grid>
-						<Grid container justify="center" spacing={40} className={classes.root}>
+						<Grid container style={{margin: '9px'}} justify="flex-start" spacing={16} className={classes.root}>
 							<Grid item >
 								{this.TextField_(baths, "Bathrooms", "baths")}
 							</Grid>
@@ -384,7 +387,7 @@ class SimpleModal extends React.Component {
 							</Grid>
 							<Grid item>
 								<MuiThemeProvider theme={green_theme}>
-									<Button onClick={this.handleDeploy} color="primary" variant="contained" component="span" className={classes.button}>
+									<Button onClick={this.handleDeploy} disabled={this.state.disableButton} color="primary" variant="contained" component="span" className={classes.button}>
 										Deploy
 									</Button>
 								</MuiThemeProvider>
