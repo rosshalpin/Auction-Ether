@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {  Component } from 'react';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
@@ -6,8 +6,14 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+const request = require("request");
 
-class AuctionCard extends Component {
+class AuctionCard extends  Component {
+	
+	shouldComponentUpdate(nextProps) {
+    return false;
+  }
+  
 	state = {
 		images: this.props.data.media.images,
 		desc: this.props.data.media.desc,
@@ -17,11 +23,19 @@ class AuctionCard extends Component {
 		furnished: this.props.data.media.furnished,
 		amount: this.props.data.media.amount,
 	}
-	componentDidMount = () => {
-		//console.log(this.props.data);
-    }
+  
+  
 	render() {
+    
+    let styles = {
+      width: "40px",
+      marginBottom: "-12px",
+      marginRight: "-10px",
+      marginLeft: "-22px"
+    };
+    
 		return(
+			<div>
 			<Card className="Auction-card">
 				<CardActionArea>
 					<CardMedia
@@ -40,7 +54,10 @@ class AuctionCard extends Component {
 							{this.state.furnished}
 						</Typography>
 						<Typography variant="h6">
-							{"€"}{this.state.amount}
+							<img style={styles} src="https://www.ethereum.org/images/logos/ETHEREUM-ICON_Black_small.png"/>{this.state.amount}
+						</Typography>
+            <Typography variant="subtitle1">
+              € {(this.state.amount * this.props.ex.EUR).toFixed(2)} <Typography variant="caption">approx.</Typography>
 						</Typography>
 					</CardContent>
 				</CardActionArea>
@@ -53,6 +70,7 @@ class AuctionCard extends Component {
 					</Button>
 				</CardActions>
 			</Card>
+			</div>
 		);
 	}
 }

@@ -5,12 +5,11 @@ import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
-//import classNames from 'classnames';
-import Tooltip from '@material-ui/core/Tooltip';
 import Grid from '@material-ui/core/Grid';
 import green from '@material-ui/core/colors/green';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import ipfs from './ipfs';
+import SnackBar from './SnackBar';
 
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 function getModalStyle() {
@@ -140,7 +139,8 @@ class SimpleModal extends React.Component {
 		furnished: 'Furnished',
 		images: [],
 		ipfs: '',
-		txHash: '',
+		txHash: [],
+    color: 'green'
 	};
 	
 	handleChange = name => event => {
@@ -165,18 +165,23 @@ class SimpleModal extends React.Component {
 			baths: 'One Bath',
 			furnished: 'Furnished',
 			images: [],
-			ipfsHash: '',
+			ipfs: '',
+			txHash: [],
+      color: 'green'
 		});
 	};
 	
 	handleWordCount = (event) => {
 		const charCount = event.target.value.length;
 		const charLeft = 180 - charCount;
-		if(charLeft < 0){
-			this.setState({ chars_left: 0});
+		if(charLeft <= 0){
+			this.setState({ chars_left: 0, color: 'red'});
 			event.target.value = event.target.value.slice(0, 180);
-		}else{
-			this.setState({ chars_left: charLeft});
+      
+		}else if(charLeft <= 20 && charLeft >=1){
+      this.setState({ chars_left: charLeft,color: 'orange'});
+    }else{
+			this.setState({ chars_left: charLeft,color: 'green'});
 		}
 		this.setState({ desc: event.target.value});
 	}
@@ -198,7 +203,7 @@ class SimpleModal extends React.Component {
 		}
 		this.setState({ fileList: fileNames });
 		this.setState({ images: files_64 })
-		console.log(this.state.fileList);
+		//console.log(this.state.fileList);
 	}
 
 	handleDeploy = async () => {
@@ -210,16 +215,17 @@ class SimpleModal extends React.Component {
 			baths: this.state.baths,
 			furnished: this.state.furnished,
 			images: this.state.images,
+			txHash: '',
 		}
 		const buffer = await Buffer.from(JSON.stringify(details));
 		await ipfs.add(buffer, (err, ipfsHash) => {
-			console.log(err,ipfsHash);
+			//console.log(err,ipfsHash);
 			if(err){
 				console.log(err)
 			}else{
 				this.setState({ ipfsHash: ipfsHash[0].hash });
-				console.log(typeof this.state.ipfsHash);
 				this.deployContract();
+				this.handleClose();
 			}
 		})
 	}
@@ -230,9 +236,11 @@ class SimpleModal extends React.Component {
 		const { interf, bytecode} = this.props.contract;
 		const result = await new web3.eth.Contract(JSON.parse(interf))
 			.deploy({ data: '0x'+ bytecode, arguments: [1,1,1000,this.state.ipfsHash] })
-			.send({ gas: '1000000', value: web3.utils.toWei('0.0002', 'ether'), from: accounts[0] });
+			.send({ gas: '2000000', value: web3.utils.toWei('0.0002', 'ether'), from: accounts[0] });
 		console.log('Contract deployed to', result.options.address);
-		this.setState({ txHash: result.options.address});
+		var nHash = this.state.txHash;
+		nHash.push(result.options.address);
+		this.setState({ txHash: nHash});
 	}
 	
 	TextField_ = (obj, desc, id) => {
@@ -265,8 +273,16 @@ class SimpleModal extends React.Component {
 	
 	render() {
 		const { classes } = this.props;
+    let ethStyle = {
+      width: "40px",
+      marginLeft: "-15px",
+      marginRight: "-10px"
+    }
 		return (
 		<div>
+			{this.state.txHash.map((hash, x) => {
+        return <SnackBar data={hash} key={"snack" + x}/>;
+      })}
 			<Button onClick={this.handleOpen} variant="outlined" color="inherit">Create Auction</Button>
 			<Modal
 				aria-labelledby="simple-modal-title"
@@ -293,14 +309,16 @@ class SimpleModal extends React.Component {
 									id="outlined-adornment-amount"
 									className={classes.textField}
 									variant="outlined"
-									placeholder="Amount"
+									placeholder="ETH"
 									value={this.state.amount}
 									onChange={this.handleChange('amount')}
 									margin="normal"
 									helperText="Reserve Amount"
 									style={{ width: '120px'}}
 									InputProps={{
-										startAdornment: <InputAdornment position="start">€</InputAdornment>,
+										startAdornment: <InputAdornment position="start">
+                       <img style={ethStyle} src="https://www.ethereum.org/images/logos/ETHEREUM-ICON_Black_small.png"/>
+                    </InputAdornment>,
 									}}
 								/>
 							</Grid>
@@ -321,13 +339,13 @@ class SimpleModal extends React.Component {
 									placeholder="Description"
 									multiline={true}
 									rows={3}
-									style = {{width: '620px'}}
+									style = {{width: '560px'}}
 									maxLength={140}
 									required onChange={this.handleWordCount}
 									margin="normal"
 									variant="outlined"
 									InputProps={{
-										endAdornment: <InputAdornment style={{color: 'grey'}} position="end">{this.state.chars_left}</InputAdornment>,
+										endAdornment: <InputAdornment style={{color: this.state.color}} position="end">{this.state.chars_left}</InputAdornment>,
 									}}
 								/>
 							</div>
