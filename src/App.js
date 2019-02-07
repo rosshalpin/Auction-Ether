@@ -11,6 +11,7 @@ window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 
 const request = require("request");
 const web3 = new Web3(window.ethereum);
+var invert = false;
 
 class App extends Component {
   state = {
@@ -68,11 +69,11 @@ class App extends Component {
 				.call({from: web3.eth.getAccounts[0]})
 				.then(result => result);
 			var oldState = this.state.addresses;
-			this.setState({ addresses: auctions });
-			if(oldState.toString() !== this.state.addresses.toString()){
-				this.setState({ auctions: [] });
-				await this.handleContracts();
-			}
+      this.setState({ addresses: auctions }); 
+      if(oldState.toString() !== this.state.addresses.toString() && this.state.auctions.length != auctions.length){
+        this.setState({ auctions: [] }); // possibly why dissappears
+        await this.handleContracts();
+      }
 	}
 
   handleContracts = async () => {
@@ -104,28 +105,34 @@ class App extends Component {
 				this.setState({
 					auctions: [...this.state.auctions, nAuction]
 				})
+        console.log('update');
       }
     });
   };
-  
-  handleSort = () => {
+
+  handleSort = async () => {
     if(this.state.auctions.length > 1){
-      let aucSort = this.state.auctions;
-      aucSort.sort((a, b) => (parseInt(a.media.amount) > parseInt(b.media.amount)) ? 1 : -1)
-      this.setState({ auctions: [] });
-      this.setState({ auctions: aucSort });
+      var aucSort = this.state.auctions.slice(0);
+      if(invert == false){
+        aucSort.sort((a, b) => (parseInt(a.media.amount) > parseInt(b.media.amount)) ? 1 : -1);
+      }else{
+        aucSort.sort((a, b) => (parseInt(a.media.amount) > parseInt(b.media.amount)) ? -1 : 1);
+      }
+      await this.setState({ auctions: [] });
+      await this.setState({ auctions: aucSort });
+      invert = !invert;
     }
+    
   }
   
   render() {
-		const {web3, auctions} = this.state;
     return (
       <React.Fragment>
         <CssBaseline />
         <div className="App">
           <AppBar web3={web3} contract={contract} sort={this.handleSort} />
           <div style={{ padding: "15px" }}>
-            {auctions.map((content, x) => <AuctionCard key={"card" + x} data={content} ex={this.state.exchange} />
+            {this.state.auctions.map((content, x) => <AuctionCard key={"card" + x} data={content} ex={this.state.exchange} />
             )}
           </div>
         </div>

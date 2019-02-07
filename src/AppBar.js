@@ -3,9 +3,10 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import { withStyles, MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import Modal from './uploadModal.js';
-import GavelIcon from '@material-ui/icons/Gavel';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Sort';
+import SortIcon from '@material-ui/icons/Sort';
+import Typography from '@material-ui/core/Typography';
+import Tooltip from '@material-ui/core/Tooltip';
 
 const styles = {
   root: {
@@ -39,6 +40,10 @@ const green_theme = createMuiTheme({
 
 class ButtonAppBar extends React.Component {
   
+  click = () => {
+    this.props.sort();
+  }
+  
 	render() {
 		const { classes,web3,contract } = this.props;
 		return (
@@ -46,11 +51,15 @@ class ButtonAppBar extends React.Component {
 				<MuiThemeProvider theme={green_theme}>
 					<AppBar position="static">
 						<Toolbar>
-							<GavelIcon  className={classes.menuButton}/>
+              <Typography className={classes.title} variant="h6" color="inherit">
+                Renther
+              </Typography>
 							<Modal web3={web3} contract={contract} />
-              <IconButton onClick={this.props.sort} className={classes.sortButton} color="inherit" aria-label="Menu">
-                <MenuIcon />
-              </IconButton>
+              <Tooltip title="Sort Price">
+                <IconButton onClick={this.click} className={classes.sortButton} color="inherit" aria-label="Menu">
+                  <SortIcon />
+                </IconButton>
+              </Tooltip>
 						</Toolbar>
 					</AppBar>
 				</MuiThemeProvider>

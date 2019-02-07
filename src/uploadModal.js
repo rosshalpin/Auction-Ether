@@ -49,6 +49,9 @@ const styles = theme => ({
 	root: {
 		flexGrow: 1,
 	},
+  menuButton: {
+    marginRight: 1,
+  },
 });
 
 const green_theme = createMuiTheme({

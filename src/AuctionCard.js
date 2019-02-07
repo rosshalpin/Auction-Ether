@@ -9,10 +9,6 @@ import Typography from '@material-ui/core/Typography';
 const request = require("request");
 
 class AuctionCard extends  Component {
-	
-	shouldComponentUpdate(nextProps) {
-    return false;
-  }
   
 	state = {
 		images: this.props.data.media.images,
