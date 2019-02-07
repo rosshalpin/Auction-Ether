@@ -54,7 +54,7 @@ class ButtonAppBar extends React.Component {
               <Typography className={classes.title} variant="h6" color="inherit">
                 Renther
               </Typography>
-							<Modal web3={web3} contract={contract} />
+							<Modal ex={this.props.ex.EUR} web3={web3} contract={contract} />
               <Tooltip title="Sort Price">
                 <IconButton onClick={this.click} className={classes.sortButton} color="inherit" aria-label="Menu">
                   <SortIcon />

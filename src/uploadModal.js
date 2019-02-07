@@ -10,6 +10,7 @@ import green from '@material-ui/core/colors/green';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import ipfs from './ipfs';
 import SnackBar from './SnackBar';
+import Tooltip from '@material-ui/core/Tooltip';
 
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 function getModalStyle() {
@@ -144,7 +145,7 @@ class SimpleModal extends React.Component {
 		ipfs: '',
 		txHash: [],
     color: 'green',
-    disableButton: false
+    disableButton: false,
 	};
 	
 	handleChange = name => event => {
@@ -172,7 +173,7 @@ class SimpleModal extends React.Component {
 			ipfs: '',
 			txHash: [],
       color: 'green',
-      disableButton: false
+      disableButton: false,
 		});
 	};
 	
@@ -311,24 +312,24 @@ class SimpleModal extends React.Component {
 							</Grid>
 							<Grid item >
 								{/* AMOUNT */}
-								<TextField
-									id="outlined-adornment-amount"
-									className={classes.textField}
-									variant="outlined"
-									placeholder="ETH"
-									value={this.state.amount}
-									onChange={this.handleChange('amount')}
-									margin="normal"
-									helperText="Reserve Amount"
-									style={{ width: '120px'}}
-									InputProps={{
-										startAdornment: <InputAdornment position="start">
-                       <img style={ethStyle} src="https://www.ethereum.org/images/logos/ETHEREUM-ICON_Black_small.png"/>
-                    </InputAdornment>,
-									}}
-								/>
+                  <TextField
+                    id="outlined-adornment-amount"
+                    className={classes.textField}
+                    variant="outlined"
+                    placeholder="ETH"
+                    value={this.state.amount}
+                    onChange={this.handleChange('amount')}
+                    margin="normal"
+                    helperText="Reserve Amount"
+                    style={{ width: '180px'}}
+                    label={"€ " + (this.props.ex * this.state.amount).toFixed(2)}
+                    InputProps={{
+                      startAdornment: <InputAdornment position="start">
+                         <img style={ethStyle} src="https://www.ethereum.org/images/logos/ETHEREUM-ICON_Black_small.png"/>
+                      </InputAdornment>,
+                    }}
+                  />
 							</Grid>
-							
 						</Grid>
 						<Grid container style={{margin: '9px'}} justify="flex-start" spacing={16} className={classes.root}>
 							<Grid item >

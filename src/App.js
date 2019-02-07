@@ -71,7 +71,7 @@ class App extends Component {
 				.then(result => result);
 			var oldState = this.state.addresses;
       this.setState({ addresses: auctions }); 
-      if(oldState.toString() !== this.state.addresses.toString() && this.state.auctions.length != auctions.length){
+      if(oldState.toString() !== this.state.addresses.toString() && this.state.auctions.length !== auctions.length){
         this.setState({ auctions: [] }); // possibly why dissappears
         await this.handleContracts();
       }
@@ -114,7 +114,7 @@ class App extends Component {
   handleSort = async () => {
     if(this.state.auctions.length > 1){
       var aucSort = this.state.auctions.slice(0);
-      if(invert == false){
+      if(invert === false){
         aucSort.sort((a, b) => (parseInt(a.media.amount) > parseInt(b.media.amount)) ? 1 : -1);
       }else{
         aucSort.sort((a, b) => (parseInt(a.media.amount) > parseInt(b.media.amount)) ? -1 : 1);
@@ -131,7 +131,7 @@ class App extends Component {
       <React.Fragment>
         <CssBaseline />
         <div className="App">
-          <AppBar web3={web3} contract={contract} sort={this.handleSort} />
+          <AppBar web3={web3} contract={contract} sort={this.handleSort} ex={this.state.exchange} />
           <Grid style={{ padding: "15px", marginTop: "60px" }} container justify="center" spacing={16}>
             {this.state.auctions.map((content, x) => <AuctionCard key={"card" + x} data={content} ex={this.state.exchange} />
             )}
