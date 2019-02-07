@@ -49,7 +49,7 @@ class ButtonAppBar extends React.Component {
 		return (
 			<div className={classes.root}>
 				<MuiThemeProvider theme={green_theme}>
-					<AppBar position="static">
+					<AppBar position="fixed">
 						<Toolbar>
               <Typography className={classes.title} variant="h6" color="inherit">
                 Renther

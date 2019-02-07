@@ -61,9 +61,6 @@ class AuctionCard extends  Component {
 					<Button size="small" color="primary">
 						Share
 					</Button>
-					<Button size="small" color="primary">
-						Learn More
-					</Button>
 				</CardActions>
 			</Card>
 			</div>

@@ -131,7 +131,7 @@ class App extends Component {
         <CssBaseline />
         <div className="App">
           <AppBar web3={web3} contract={contract} sort={this.handleSort} />
-          <div style={{ padding: "15px" }}>
+          <div style={{ padding: "15px", marginTop: "60px" }}>
             {this.state.auctions.map((content, x) => <AuctionCard key={"card" + x} data={content} ex={this.state.exchange} />
             )}
           </div>
