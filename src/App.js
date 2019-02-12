@@ -21,7 +21,8 @@ class App extends Component {
 		checked: false,
 		ledgerAbi: '',
 		ledger: '',
-    exchange: 0
+    exchange: 0,
+    web3: null
   };
 
   componentDidMount = async () => {
@@ -137,7 +138,7 @@ class App extends Component {
         <div className="App">
           <AppBar web3={web3} contract={contract} sort={this.handleSort} ex={this.state.exchange} />
           <Grid style={{ padding: "15px", marginTop: "60px" }} container justify="center" >
-            {this.state.auctions.map((content, x) => <AuctionCard key={content.address} data={content} ex={this.state.exchange} />
+            {this.state.auctions.map((content, x) => <AuctionCard key={content.address} data={content} ex={this.state.exchange} web3={this.state.web3}/>
             )}
           </Grid>
         </div>

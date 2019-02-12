@@ -42,10 +42,23 @@ class AuctionCard extends  Component {
 		furnished: this.props.data.media.furnished,
 		amount: this.props.data.media.amount,
     open: false,
+    contract: this.props.data.contract,
+    web3: this.props.web3,
+    creator: null
 	}
   
-  componentDidMount(){
-    console.log(this.props.data.contract.methods)
+  componentDidMount = async () => {
+    this.handleContract();
+  }
+  
+  handleContract = async() => {
+    const {contract, web3} = this.state;
+    var auctionSeller = await contract.methods
+          .auctionSeller()
+          .call({ from: web3.eth.getAccounts[0] })
+          .then(result => result);
+    console.log(contract.methods);
+    this.setState({creator: auctionSeller});
   }
 
   handleOpen = () => {
@@ -108,7 +121,7 @@ class AuctionCard extends  Component {
         >
           <div style={getModalStyle()} className={classes.paper}>
             <Typography variant="h6" id="modal-title">
-              Text in a modal
+              Creator: {this.state.creator}
             </Typography>
             <Typography variant="subtitle1" id="simple-modal-description">
               Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
