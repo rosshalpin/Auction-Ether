@@ -5,6 +5,7 @@ import AuctionCard from "./AuctionCard.js";
 import contract from "./contract";
 import AppBar from "./AppBar";
 import CssBaseline from "@material-ui/core/CssBaseline";
+import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
@@ -12,6 +13,22 @@ window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 const request = require("request");
 const web3 = new Web3(window.ethereum);
 var invert = false;
+
+const styles = {
+  root: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    overflow: 'hidden',
+  },
+  gridList: {
+    width: 500,
+    height: 450,
+  },
+  icon: {
+    color: 'rgba(255, 255, 255, 0.54)',
+  },
+}
 
 class App extends Component {
   state = {
@@ -91,22 +108,21 @@ class App extends Component {
           .call({ from: web3.eth.getAccounts[0] })
           .then(result => result);
         var auctionMediaURL = "https://gateway.ipfs.io/ipfs/" + auctionIPFS;
-        await this.handleGetIPFS(auctionMediaURL, address, auction);
+        await this.handleGetIPFS(auctionMediaURL, address);
       }
     } catch (e) {
       console.log(e);
     }
   };
 	
-	handleGetIPFS = async (auctionMediaURL, address, auction) => {
+	handleGetIPFS = async (auctionMediaURL, address) => {
     await request(auctionMediaURL, { json: true }, (err, res, body) => {
       if (err) {
         return console.log(err);
       } else {
         var nAuction = {
           media: body,
-          address: address,
-          contract: auction,
+          address: address
         };
 				this.setState({
 					auctions: [...this.state.auctions, nAuction]
@@ -136,7 +152,7 @@ class App extends Component {
         <CssBaseline />
         <div className="App">
           <AppBar web3={web3} contract={contract} sort={this.handleSort} ex={this.state.exchange} />
-          <Grid style={{ padding: "15px", marginTop: "60px" }} container justify="center" >
+          <Grid style={{ padding: "15px", marginTop: "60px" }} container justify="center" spacing={16}>
             {this.state.auctions.map((content, x) => <AuctionCard key={content.address} data={content} ex={this.state.exchange} />
             )}
           </Grid>

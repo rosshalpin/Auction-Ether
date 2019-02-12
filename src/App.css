@@ -36,6 +36,6 @@
 	max-width: 300px;
 	display: inline-block;
 	margin: 10px;
-	float: left;
-	min-height: 280px;
+  margin-right: 20px;
+  height: 200px;
 }

@@ -30,7 +30,7 @@ const styles = {
 const green_theme = createMuiTheme({
 	palette: {
 		primary: {
-			main: '#2196f3',
+			main: '#fafafa',
 		}
 	},
 	typography: {
@@ -49,13 +49,13 @@ class ButtonAppBar extends React.Component {
 		return (
 			<div className={classes.root}>
 				<MuiThemeProvider theme={green_theme}>
-					<AppBar position="fixed">
+					<AppBar style={{boxShadow: "none"}} position="fixed">
 						<Toolbar>
               <Typography className={classes.title} variant="h6" color="inherit">
                 Renther
               </Typography>
 							<Modal ex={this.props.ex.EUR} web3={web3} contract={contract} />
-              <Tooltip title="Sort Price">
+              <Tooltip placement="left" title="Sort Price">
                 <IconButton onClick={this.click} className={classes.sortButton} color="inherit" aria-label="Menu">
                   <SortIcon />
                 </IconButton>
