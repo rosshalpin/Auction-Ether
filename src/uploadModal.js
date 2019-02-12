@@ -10,7 +10,6 @@ import green from '@material-ui/core/colors/green';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import ipfs from './ipfs';
 import SnackBar from './SnackBar';
-import Tooltip from '@material-ui/core/Tooltip';
 
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 function getModalStyle() {

@@ -19,6 +19,10 @@ class AuctionCard extends  Component {
 		amount: this.props.data.media.amount,
 	}
   
+  componentDidMount(){
+    //console.log(this.props.nkey)
+  }
+  
   
 	render() {
     
@@ -32,13 +36,7 @@ class AuctionCard extends  Component {
 		return(
 			<div>
 			<Card className="Auction-card">
-				<CardActionArea>
-					<CardMedia
-						component="img"
-						className="media"
-						height="140"
-						src={this.state.images[0]}
-					/>
+				<CardActionArea>					
 					<CardContent>
 						<Typography  variant="h5" >
 							{this.state.rent_type}
@@ -52,9 +50,15 @@ class AuctionCard extends  Component {
 							<img style={styles} src="https://www.ethereum.org/images/logos/ETHEREUM-ICON_Black_small.png"/>{this.state.amount}
 						</Typography>
             <Typography variant="subtitle1">
-              € {(this.state.amount * this.props.ex.EUR).toFixed(2)} <Typography variant="caption">approx.</Typography>
+              € {(this.state.amount * this.props.ex.EUR).toFixed(2)}
 						</Typography>
 					</CardContent>
+          <CardMedia
+						component="img"
+						className="media"
+						height="140"
+						src={this.state.images[0]}
+					/>
 				</CardActionArea>
 				<CardActions>
 					<Button size="small" color="primary">
