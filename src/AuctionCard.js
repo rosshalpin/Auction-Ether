@@ -7,6 +7,10 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { withStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Grid from '@material-ui/core/Grid';
+import green from '@material-ui/core/colors/green';
+import {MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 function getModalStyle() {
   const top = 50;
@@ -19,10 +23,19 @@ function getModalStyle() {
   };
 }
 
+const green_theme = createMuiTheme({
+	palette: {
+		primary: green,
+	},
+	typography: {
+		useNextVariants: true,
+	},
+});
+
 const styles = theme => ({
   paper: {
 		position: 'absolute',
-		width: theme.spacing.unit * 80,
+		width: theme.spacing.unit * 50,
 		backgroundColor: theme.palette.background.paper,
 		boxShadow: theme.shadows[5],
 		padding: theme.spacing.unit * 4,
@@ -42,22 +55,24 @@ class AuctionCard extends  Component {
 		furnished: this.props.data.media.furnished,
 		amount: this.props.data.media.amount,
     open: false,
-    contract: this.props.data.contract,
+    auctionFunc: this.props.data.auctionFunc,
     web3: this.props.web3,
-    creator: null
+    creator: null,
 	}
   
   componentDidMount = async () => {
     this.handleContract();
+
   }
   
   handleContract = async() => {
-    const {contract, web3} = this.state;
-    var auctionSeller = await contract.methods
+    const {auctionFunc, web3} = this.state;
+    const accounts = await web3.eth.getAccounts();
+    var auctionSeller = await auctionFunc.methods
           .auctionSeller()
-          .call({ from: web3.eth.getAccounts[0] })
+          .call({ from: accounts[0] })
           .then(result => result);
-    console.log(contract.methods);
+    console.log(auctionFunc.methods);
     this.setState({creator: auctionSeller});
   }
 
@@ -69,7 +84,57 @@ class AuctionCard extends  Component {
     this.setState({ open: false });
   };
   
+  handleBid = async () => {
+    const {auctionFunc, web3} = this.state;
+    const accounts = await web3.eth.getAccounts();
+    console.log(accounts)
+
+    const bid = await auctionFunc.methods
+          .placeBid()
+          .send({ from: accounts[0], value: web3.utils.toWei('1', 'ether') })
+          .then(result => result); 
+    console.log(bid);
+
+  }
   
+  AuctionModal = () => {
+    const { classes } = this.props;
+    return(
+      <Modal
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+          open={this.state.open}
+          onClose={this.handleClose}
+        >
+          <div style={getModalStyle()} className={classes.paper}>
+            <Grid
+              container
+              direction="row"
+              justify="flex-start"
+              alignItems="center"
+              spacing={16}
+            >
+              <Grid item>
+                <TextField
+                  id="outlined-helperText"
+                  label="Amount"
+                  margin="dense"
+                  variant="outlined"
+                  style={{width: "110px"}}
+                />
+              </Grid>
+              <Grid item>
+                <MuiThemeProvider theme={green_theme}>
+                  <Button onClick={this.handleBid} variant="contained" color="primary" className={classes.button} >
+                    Bid
+                  </Button>
+                </MuiThemeProvider>
+              </Grid>
+            </Grid>
+          </div>
+      </Modal>
+    );
+  }
   
 	render() {
     const { classes } = this.props;
@@ -112,22 +177,7 @@ class AuctionCard extends  Component {
 					/>
 				</CardActionArea>
 			</Card>
-      
-      <Modal
-          aria-labelledby="simple-modal-title"
-          aria-describedby="simple-modal-description"
-          open={this.state.open}
-          onClose={this.handleClose}
-        >
-          <div style={getModalStyle()} className={classes.paper}>
-            <Typography variant="h6" id="modal-title">
-              Creator: {this.state.creator}
-            </Typography>
-            <Typography variant="subtitle1" id="simple-modal-description">
-              Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-            </Typography>
-          </div>
-      </Modal>
+      {this.AuctionModal()}
       </div>
 		);
 	}

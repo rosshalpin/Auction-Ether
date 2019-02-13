@@ -107,7 +107,8 @@ class App extends Component {
         var nAuction = {
           media: body,
           address: address,
-          contract: auction,
+          auctionFunc: auction,
+          contract: contract,
         };
 				this.setState({
 					auctions: [...this.state.auctions, nAuction]
@@ -137,7 +138,7 @@ class App extends Component {
         <CssBaseline />
         <div className="App">
           <AppBar web3={web3} contract={contract} sort={this.handleSort} ex={this.state.exchange} />
-          <Grid style={{ padding: "15px", marginTop: "60px" }} container justify="center" >
+          <Grid style={{ marginTop: "60px" }} container justify="center" spacing={16}>
             {this.state.auctions.map((content, x) => <AuctionCard key={content.address} data={content} ex={this.state.exchange} web3={this.state.web3}/>
             )}
           </Grid>

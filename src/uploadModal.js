@@ -10,6 +10,7 @@ import green from '@material-ui/core/colors/green';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import ipfs from './ipfs';
 import SnackBar from './SnackBar';
+import contract from "./contract";
 
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 function getModalStyle() {
@@ -239,7 +240,7 @@ class SimpleModal extends React.Component {
 	deployContract = async () => {
 		const web3 = await this.props.web3;
 		const accounts = await web3.eth.getAccounts();
-		const { interf, bytecode} = this.props.contract;
+		const { interf, bytecode} = contract;
 		const result = await new web3.eth.Contract(JSON.parse(interf))
 			.deploy({ data: '0x'+ bytecode, arguments: [1,1,1000,this.state.ipfsHash] })
 			.send({ gas: '2000000', value: web3.utils.toWei('0.0002', 'ether'), from: accounts[0] });
@@ -264,8 +265,9 @@ class SimpleModal extends React.Component {
 					},
 				}}
 				style={{ width: '120px'}}
+        
 				helperText={desc}
-				margin="normal"
+				margin="dense"
 				variant="outlined"
 			>
 				{obj.map(option => (
@@ -318,7 +320,7 @@ class SimpleModal extends React.Component {
                     placeholder="ETH"
                     value={this.state.amount}
                     onChange={this.handleChange('amount')}
-                    margin="normal"
+                    margin="dense"
                     helperText="Reserve Amount"
                     style={{ width: '180px'}}
                     label={"€ " + (this.props.ex * this.state.amount).toFixed(2)}
@@ -348,7 +350,7 @@ class SimpleModal extends React.Component {
 									style = {{width: '560px'}}
 									maxLength={140}
 									required onChange={this.handleWordCount}
-									margin="normal"
+									margin="dense"
 									variant="outlined"
 									InputProps={{
 										endAdornment: <InputAdornment style={{color: this.state.color}} position="end">{this.state.chars_left}</InputAdornment>,

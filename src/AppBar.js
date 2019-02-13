@@ -45,16 +45,16 @@ class ButtonAppBar extends React.Component {
   }
   
 	render() {
-		const { classes,web3,contract } = this.props;
+		const { classes,web3} = this.props;
 		return (
 			<div className={classes.root}>
 				<MuiThemeProvider theme={green_theme}>
 					<AppBar style={{boxShadow: "none"}} position="fixed">
 						<Toolbar>
-              <Typography className={classes.title} variant="h6" color="inherit">
+              <Typography style={{fontWeight: 'bold'}} className={classes.title} variant="h6" color="inherit">
                 Renther
               </Typography>
-							<Modal ex={this.props.ex.EUR} web3={web3} contract={contract} />
+							<Modal ex={this.props.ex.EUR} web3={web3}/>
               <Tooltip placement="left" title="Sort Price">
                 <IconButton onClick={this.click} className={classes.sortButton} color="inherit" aria-label="Menu">
                   <SortIcon />
