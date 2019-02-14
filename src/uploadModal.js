@@ -40,7 +40,7 @@ const base_64 = (inputFile) => {
 const styles = theme => ({
 	paper: {
 		position: 'absolute',
-		width: theme.spacing.unit * 80,
+		width: 'auto',
 		backgroundColor: theme.palette.background.paper,
 		boxShadow: theme.shadows[5],
 		padding: theme.spacing.unit * 4,
@@ -130,17 +130,117 @@ const furnished = [
 	},
 ];
 
+const counties = [
+  {
+    value: 'Antrim',
+  },
+  {
+    value: 'Armagh',
+  },
+  {
+    value: 'Carlow',
+  },
+  {
+    value: 'Cavan',
+  },
+  {
+    value: 'Clare',
+  },
+  {
+    value: 'Cork',
+  },
+  {
+    value: 'Kerry',
+  },
+  {
+    value: 'Donegal',
+  },
+  {
+    value: 'Down',
+  },
+  {
+    value: 'Dublin',
+  },
+  {
+    value: 'Fermanagh',
+  },
+  {
+    value: 'Galway',
+  },
+  {
+    value: 'Kerry',
+  },
+  {
+    value: 'Kildare',
+  },
+  {
+    value: 'Kilkenny',
+  },
+  {
+    value: 'Laois',
+  },
+  {
+    value: 'Leitrim',
+  },
+  {
+    value: 'Limerick',
+  },
+  {
+    value: 'Longford',
+  },
+  {
+    value: 'Louth',
+  },
+  {
+    value: 'Mayo',
+  },
+  {
+    value: 'Meath',
+  },
+  {
+    value: 'Monaghan',
+  },
+  {
+    value: 'Offaly',
+  },
+  {
+    value: 'Roscommon',
+  },
+  {
+    value: 'Sligo',
+  },
+  {
+    value: 'Tipperary',
+  },
+  {
+    value: 'Tyrone',
+  },
+  {
+    value: 'Waterford',
+  },
+  {
+    value: 'Westmeath',
+  },
+  {
+    value: 'Wexford',
+  },
+  {
+    value: 'Wicklow',
+  }
+];
+
 class SimpleModal extends React.Component {
 	state = {
 		open: false,
-		beds: 'One Bed',
-		rent_type: 'House',
+		beds: '',
+		rent_type: '',
 		desc: '',
 		chars_left: 180,
 		fileList: [],
 		amount: '',
-		baths: 'One Bath',
-		furnished: 'Furnished',
+		baths: '',
+		furnished: '',
+    county: '',
 		images: [],
 		ipfs: '',
 		txHash: [],
@@ -161,19 +261,21 @@ class SimpleModal extends React.Component {
 	handleClose = () => {
 		this.setState({
 			open: false,
-			beds: 'One Bed',
-			rent_type: 'House',
+			beds: '',
+			rent_type: '',
 			desc: '',
 			chars_left: 180,
 			fileList: [],
 			amount: '',
-			baths: 'One Bath',
-			furnished: 'Furnished',
+			baths: '',
+			furnished: '',
+      county: '',
 			images: [],
 			ipfs: '',
 			txHash: [],
       color: 'green',
       disableButton: false,
+      
 		});
 	};
 	
@@ -250,7 +352,7 @@ class SimpleModal extends React.Component {
 		this.setState({ txHash: nHash});
 	}
 	
-	TextField_ = (obj, desc, id) => {
+	TextField_ = (obj, desc, id, width='120px') => {
 		const { classes } = this.props;
 		return(
 			<TextField
@@ -264,14 +366,14 @@ class SimpleModal extends React.Component {
 						className: classes.menu,
 					},
 				}}
-				style={{ width: '120px'}}
+				style={{ width: width}}
         
 				helperText={desc}
 				margin="dense"
 				variant="outlined"
 			>
-				{obj.map(option => (
-					<MenuItem key={option.value} value={option.value}>
+				{obj.map((option, x) => (
+					<MenuItem key={option+x} value={option.value}>
 						{option.value}
 					</MenuItem>
 				))}
@@ -298,13 +400,13 @@ class SimpleModal extends React.Component {
 				open={this.state.open}
 				onClose={this.handleClose}>
 				<div style={getModalStyle()} className={classes.paper}>
-					 <Grid container className={classes.root} spacing={16}>
+					<Grid container className={classes.root} spacing={16}>
 						<Grid item xs={12}>
 							<Typography variant="h6" id="modal-title">
 								Create new Auction
 							</Typography>
 						</Grid>
-						<Grid container style={{margin: '9px'}} justify="flex-start" className={classes.root} spacing={16}>
+						<Grid container justify="flex-start" className={classes.root} spacing={16}>
 							<Grid item >
 								{this.TextField_(beds, "How many beds", "beds")}
 							</Grid>
@@ -326,28 +428,50 @@ class SimpleModal extends React.Component {
                     label={"€ " + (this.props.ex * this.state.amount).toFixed(2)}
                     InputProps={{
                       startAdornment: <InputAdornment position="start">
-                         <img style={ethStyle} src="https://www.ethereum.org/images/logos/ETHEREUM-ICON_Black_small.png"/>
+                         <img style={ethStyle} src="https://www.ethereum.org/images/logos/ETHEREUM-ICON_Black_small.png" alt=""/>
                       </InputAdornment>,
                     }}
                   />
 							</Grid>
+              <Grid item>
+                <TextField
+                  id="outlined-helperText"
+                  helperText="End Date"
+                  margin="dense"
+                  variant="outlined"
+                  style={{width: "180px"}}
+                  type="date"
+                />
+              </Grid>
 						</Grid>
-						<Grid container style={{margin: '9px'}} justify="flex-start" spacing={16} className={classes.root}>
+						<Grid container justify="flex-start" spacing={16} className={classes.root}>
 							<Grid item >
 								{this.TextField_(baths, "Bathrooms", "baths")}
 							</Grid>
 							<Grid item >
 								{this.TextField_(furnished, "Furnishing", "furnished")}
 							</Grid>
+              <Grid item>
+                <TextField
+                  id="outlined-helperText"
+                  helperText="Town/City"
+                  margin="dense"
+                  variant="outlined"
+                  style={{width: "180px"}}
+                />
+              </Grid>
+              <Grid item>
+                {this.TextField_(counties, "County", "county", "180px")}
+              </Grid>
 						</Grid>
-						<Grid container justify="center" className={classes.root}>
+						<Grid container justify="flex-start" className={classes.root}>
 							<div>
 								{/* DESCRIPTION */}
 								<TextField
 									placeholder="Description"
 									multiline={true}
 									rows={3}
-									style = {{width: '560px'}}
+									style = {{width: '648px'}}
 									maxLength={140}
 									required onChange={this.handleWordCount}
 									margin="dense"
@@ -359,7 +483,7 @@ class SimpleModal extends React.Component {
 							</div>
 						</Grid>
 						<Grid container className={classes.root}>
-							<div style={{marginLeft: '10px'}}>
+							<div>
 								{this.state.fileList.map(option => (
 									<p style={{display: 'inline', margin: '5px'}} key={option} value={option}>
 										{option}
@@ -367,7 +491,7 @@ class SimpleModal extends React.Component {
 								))}
 							</div>
 						</Grid>
-						<Grid style={{margin: '10px'}} container className={classes.root} spacing={16}>
+						<Grid style={{marginTop: '5px'}} container className={classes.root} spacing={16}>
 							{/* UPLOAD */}
 							<Grid item>
 								<div>

@@ -12,6 +12,11 @@ import Grid from '@material-ui/core/Grid';
 import green from '@material-ui/core/colors/green';
 import {MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Divider from '@material-ui/core/Divider';
+
 function getModalStyle() {
   const top = 50;
   const left = 50;
@@ -44,6 +49,26 @@ const styles = theme => ({
   },
 });
 
+class BidListItem extends Component {
+  componentDidMount = async () => {
+    console.log(this.props);
+  }
+  render () {
+    const {web3} = this.props;
+    return (
+      <div>
+        <ListItem style={{marginLeft:"-20px"}}>
+          <ListItemText
+            primary={"Ξ " + web3.utils.fromWei(this.props.data[1])}
+            secondary={this.props.data[0]}
+          />
+        </ListItem>
+        <Divider />
+      </div>
+    );
+  }
+}
+
 class AuctionCard extends  Component {
   
 	state = {
@@ -58,11 +83,13 @@ class AuctionCard extends  Component {
     auctionFunc: this.props.data.auctionFunc,
     web3: this.props.web3,
     creator: null,
+    bidAmount: null,
+    biddingLog: [],
 	}
   
   componentDidMount = async () => {
     this.handleContract();
-
+    this.handleBidderLog();
   }
   
   handleContract = async() => {
@@ -87,14 +114,35 @@ class AuctionCard extends  Component {
   handleBid = async () => {
     const {auctionFunc, web3} = this.state;
     const accounts = await web3.eth.getAccounts();
-    console.log(accounts)
-
     const bid = await auctionFunc.methods
           .placeBid()
-          .send({ from: accounts[0], value: web3.utils.toWei('1', 'ether') })
+          .send({ from: accounts[0], value: web3.utils.toWei(this.state.bidAmount, 'ether') })
           .then(result => result); 
     console.log(bid);
-
+  }
+  
+  handleBidderLog = async () => {
+    const {auctionFunc, web3} = this.state;
+    const accounts = await web3.eth.getAccounts();
+    var bidderLog = await auctionFunc.methods
+      .getBidderLog()
+      .call({ from: accounts[0] })
+      .then(result => result);
+    var bidLog = await auctionFunc.methods
+      .getBidLog()
+      .call({ from: accounts[0] })
+      .then(result => result);
+    
+    
+    var biddingLog = bidderLog.map(function(v,i) {
+        return [v, bidLog[i]];
+    });
+    
+    await this.setState({biddingLog: biddingLog});
+  }
+  
+  handleBidAmount = async (event) => {
+    await this.setState({ bidAmount: event.target.value });
   }
   
   AuctionModal = () => {
@@ -121,6 +169,7 @@ class AuctionCard extends  Component {
                   margin="dense"
                   variant="outlined"
                   style={{width: "110px"}}
+                  required onChange={this.handleBidAmount}
                 />
               </Grid>
               <Grid item>
@@ -131,13 +180,23 @@ class AuctionCard extends  Component {
                 </MuiThemeProvider>
               </Grid>
             </Grid>
+            <Grid 
+            container
+            justify="flex-start"
+            >
+              <Grid item>
+                  <List dense={true}>
+                    {this.state.biddingLog.map((content, x) => <BidListItem numb={x} key={"li"+x} data={content} web3={this.state.web3}/>
+                    )}
+                  </List>
+              </Grid>
+            </Grid>
           </div>
       </Modal>
     );
   }
   
 	render() {
-    const { classes } = this.props;
     let headerStyle = {
       color: 'white',
       position: 'absolute', 
@@ -182,4 +241,4 @@ class AuctionCard extends  Component {
 		);
 	}
 }
-export  default withStyles(styles)(AuctionCard);
+export default withStyles(styles)(AuctionCard);

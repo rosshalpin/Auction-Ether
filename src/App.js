@@ -8,6 +8,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Grid from '@material-ui/core/Grid';
 
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
+window.ethereum.enable()
 
 const request = require("request");
 const web3 = new Web3(window.ethereum);
@@ -138,7 +139,7 @@ class App extends Component {
         <CssBaseline />
         <div className="App">
           <AppBar web3={web3} contract={contract} sort={this.handleSort} ex={this.state.exchange} />
-          <Grid style={{ marginTop: "60px" }} container justify="center" spacing={16}>
+          <Grid style={{ marginTop: "60px", width: "100%" }} container justify="center" spacing={16}>
             {this.state.auctions.map((content, x) => <AuctionCard key={content.address} data={content} ex={this.state.exchange} web3={this.state.web3}/>
             )}
           </Grid>
