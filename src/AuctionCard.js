@@ -9,9 +9,8 @@ import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
-import green from '@material-ui/core/colors/green';
 import {MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-
+import InputAdornment from '@material-ui/core/InputAdornment';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -30,7 +29,20 @@ function getModalStyle() {
 
 const green_theme = createMuiTheme({
 	palette: {
-		primary: green,
+		primary: {
+       main: '#43a047',
+    }
+	},
+	typography: {
+		useNextVariants: true,
+	},
+});
+
+const red_theme = createMuiTheme({
+	palette: {
+		primary: {
+       main: '#e53935',
+    }
 	},
 	typography: {
 		useNextVariants: true,
@@ -51,7 +63,7 @@ const styles = theme => ({
 
 class BidListItem extends Component {
   componentDidMount = async () => {
-    console.log(this.props);
+    //console.log(this.props);
   }
   render () {
     const {web3} = this.props;
@@ -59,11 +71,11 @@ class BidListItem extends Component {
       <div>
         <ListItem style={{marginLeft:"-20px"}}>
           <ListItemText
-            primary={"Ξ " + web3.utils.fromWei(this.props.data[1])}
+            primary={"Ξ " + web3.utils.fromWei(this.props.data[1]) + " (€" + (web3.utils.fromWei(this.props.data[1]) * this.props.ex).toFixed(2)+")"}
             secondary={this.props.data[0]}
           />
         </ListItem>
-        <Divider />
+        <Divider style={{width: '320px'}} />
       </div>
     );
   }
@@ -83,13 +95,14 @@ class AuctionCard extends  Component {
     auctionFunc: this.props.data.auctionFunc,
     web3: this.props.web3,
     creator: null,
-    bidAmount: null,
+    bidAmount: 0,
     biddingLog: [],
 	}
   
   componentDidMount = async () => {
     this.handleContract();
     this.handleBidderLog();
+    console.log(this.props.data.address);
   }
   
   handleContract = async() => {
@@ -99,7 +112,7 @@ class AuctionCard extends  Component {
           .auctionSeller()
           .call({ from: accounts[0] })
           .then(result => result);
-    console.log(auctionFunc.methods);
+    //console.log(auctionFunc.methods);
     this.setState({creator: auctionSeller});
   }
 
@@ -108,17 +121,19 @@ class AuctionCard extends  Component {
   };
 
   handleClose = () => {
-    this.setState({ open: false });
+    this.setState({ open: false, bidAmount: 0  });
   };
   
   handleBid = async () => {
     const {auctionFunc, web3} = this.state;
     const accounts = await web3.eth.getAccounts();
-    const bid = await auctionFunc.methods
-          .placeBid()
-          .send({ from: accounts[0], value: web3.utils.toWei(this.state.bidAmount, 'ether') })
-          .then(result => result); 
-    console.log(bid);
+    if(this.state.bidAmount > 0){
+      const bid = await auctionFunc.methods
+            .placeBid()
+            .send({ from: accounts[0], value: web3.utils.toWei(this.state.bidAmount, 'ether') })
+            .then(result => result); 
+      console.log(bid);
+    }
   }
   
   handleBidderLog = async () => {
@@ -133,7 +148,6 @@ class AuctionCard extends  Component {
       .call({ from: accounts[0] })
       .then(result => result);
     
-    
     var biddingLog = bidderLog.map(function(v,i) {
         return [v, bidLog[i]];
     });
@@ -147,6 +161,11 @@ class AuctionCard extends  Component {
   
   AuctionModal = () => {
     const { classes } = this.props;
+    let ethStyle = {
+      width: "40px",
+      marginLeft: "-15px",
+      marginRight: "-10px"
+    }
     return(
       <Modal
           aria-labelledby="simple-modal-title"
@@ -155,6 +174,13 @@ class AuctionCard extends  Component {
           onClose={this.handleClose}
         >
           <div style={getModalStyle()} className={classes.paper}>
+            <Grid container>
+              <Grid>
+                <Typography variant="h6" id="modal-title">
+                  Bidding History
+                </Typography>
+              </Grid>
+            </Grid>
             <Grid
               container
               direction="row"
@@ -165,17 +191,30 @@ class AuctionCard extends  Component {
               <Grid item>
                 <TextField
                   id="outlined-helperText"
-                  label="Amount"
+                  placeholder="ETH"
+                  label={"€ " + (this.props.ex.EUR * this.state.bidAmount).toFixed(2)}
                   margin="dense"
                   variant="outlined"
-                  style={{width: "110px"}}
+                  style={{width: "120px"}}
                   required onChange={this.handleBidAmount}
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start">
+                       <img style={ethStyle} src="https://www.ethereum.org/images/logos/ETHEREUM-ICON_Black_small.png" alt=""/>
+                    </InputAdornment>,
+                  }}
                 />
               </Grid>
               <Grid item>
                 <MuiThemeProvider theme={green_theme}>
                   <Button onClick={this.handleBid} variant="contained" color="primary" className={classes.button} >
                     Bid
+                  </Button>
+                </MuiThemeProvider>
+              </Grid>
+              <Grid item>
+                <MuiThemeProvider theme={red_theme}>
+                  <Button variant="contained" color="primary" className={classes.button} >
+                    WITHDRAW
                   </Button>
                 </MuiThemeProvider>
               </Grid>
@@ -186,7 +225,7 @@ class AuctionCard extends  Component {
             >
               <Grid item>
                   <List dense={true}>
-                    {this.state.biddingLog.map((content, x) => <BidListItem numb={x} key={"li"+x} data={content} web3={this.state.web3}/>
+                    {this.state.biddingLog.map((content, x) => <BidListItem ex={this.props.ex.EUR} key={"li"+x} data={content} web3={this.state.web3}/>
                     )}
                   </List>
               </Grid>
@@ -202,7 +241,7 @@ class AuctionCard extends  Component {
       position: 'absolute', 
       zIndex: 1, 
       pointerEvents: 'none',
-      top: '10px',
+      bottom: '10px',
       left: '10px',
       textShadow: '0px 0px 5px rgba(0,0,0,0.8)',
     }
@@ -211,8 +250,7 @@ class AuctionCard extends  Component {
       color: 'white',
       position: 'absolute', 
       zIndex: 1, 
-
-      top: '10px',
+      bottom: '10px',
       right: '10px',
       textShadow: '0px 0px 5px rgba(0,0,0,0.8)',
     }
@@ -223,16 +261,17 @@ class AuctionCard extends  Component {
         <Typography style={headerStyle}>
           {this.state.rent_type}  
         </Typography>
-        <Tooltip title="Ether (Euro)">
-        <Typography style={priceStyle}>
-          Ξ{this.state.amount} (€{(this.state.amount * this.props.ex.EUR).toFixed(2)})
-        </Typography>
+        <Tooltip placement="top" title="Ether (Euro)">
+          <Typography style={priceStyle}>
+            Ξ{this.state.amount} (€{(this.state.amount * this.props.ex.EUR).toFixed(2)})
+          </Typography>
         </Tooltip>
 				<CardActionArea onClick={this.handleOpen}>
           <CardMedia
 						component="img"
 						className="media"
 						src={this.state.images[0]}
+            style={{height: '200px'}}
 					/>
 				</CardActionArea>
 			</Card>

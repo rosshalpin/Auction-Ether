@@ -23,7 +23,7 @@ const styles = {
   },
   sortButton: {
     position: 'absolute',
-    right: 20
+    right: 30
   }
 };
 
@@ -55,7 +55,7 @@ class ButtonAppBar extends React.Component {
                 Renther
               </Typography>
 							<Modal ex={this.props.ex.EUR} web3={web3}/>
-              <Tooltip placement="left" title="Sort Price">
+              <Tooltip placement="bottom" title="Sort Price">
                 <IconButton onClick={this.click} className={classes.sortButton} color="inherit" aria-label="Menu">
                   <SortIcon />
                 </IconButton>

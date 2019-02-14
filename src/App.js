@@ -139,7 +139,7 @@ class App extends Component {
         <CssBaseline />
         <div className="App">
           <AppBar web3={web3} contract={contract} sort={this.handleSort} ex={this.state.exchange} />
-          <Grid style={{ marginTop: "60px", width: "100%" }} container justify="center" spacing={16}>
+          <Grid style={{ marginTop: "55px", width: "100%" }} container justify="center" spacing={16}>
             {this.state.auctions.map((content, x) => <AuctionCard key={content.address} data={content} ex={this.state.exchange} web3={this.state.web3}/>
             )}
           </Grid>

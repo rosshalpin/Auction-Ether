@@ -344,7 +344,7 @@ class SimpleModal extends React.Component {
 		const accounts = await web3.eth.getAccounts();
 		const { interf, bytecode} = contract;
 		const result = await new web3.eth.Contract(JSON.parse(interf))
-			.deploy({ data: '0x'+ bytecode, arguments: [1,1,1000,this.state.ipfsHash] })
+			.deploy({ data: '0x'+ bytecode, arguments: [1,1,50000,this.state.ipfsHash] })
 			.send({ gas: '2000000', value: web3.utils.toWei('0.0002', 'ether'), from: accounts[0] });
 		console.log('Contract deployed to', result.options.address);
 		var nHash = this.state.txHash;
@@ -400,10 +400,10 @@ class SimpleModal extends React.Component {
 				open={this.state.open}
 				onClose={this.handleClose}>
 				<div style={getModalStyle()} className={classes.paper}>
-					<Grid container className={classes.root} spacing={16}>
-						<Grid item xs={12}>
+					<Grid container className={classes.root}>
+						<Grid item >
 							<Typography variant="h6" id="modal-title">
-								Create new Auction
+								Create New Auction
 							</Typography>
 						</Grid>
 						<Grid container justify="flex-start" className={classes.root} spacing={16}>
