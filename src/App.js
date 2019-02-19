@@ -73,7 +73,6 @@ class App extends Component {
 			var oldAddresses = this.state.addresses.slice(0);
       this.setState({ addresses: auctions });
       var newAddresses = this.state.addresses.slice(0);
-      
       let difference = oldAddresses
                  .filter(x => !newAddresses.includes(x))
                  .concat(newAddresses.filter(x => !oldAddresses.includes(x)));  // https://stackoverflow.com/questions/1187518/how-to-get-the-difference-between-two-arrays-in-javascript    

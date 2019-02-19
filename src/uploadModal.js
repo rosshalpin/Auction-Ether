@@ -44,7 +44,7 @@ const styles = theme => ({
 		backgroundColor: theme.palette.background.paper,
 		boxShadow: theme.shadows[5],
 		padding: theme.spacing.unit * 4,
-		borderRadius: 5,
+		borderRadius: 2,
 		outline: 'none',
 	},
 	root: {
@@ -57,7 +57,20 @@ const styles = theme => ({
 
 const green_theme = createMuiTheme({
 	palette: {
-		primary: green,
+		primary: {
+       main: '#2196f3',
+    }
+	},
+	typography: {
+		useNextVariants: true,
+	},
+});
+
+const grey_theme = createMuiTheme({
+	palette: {
+		primary: {
+       main: '#43a047',
+    }
 	},
 	typography: {
 		useNextVariants: true,
@@ -505,9 +518,11 @@ class SimpleModal extends React.Component {
 										onChange={this.handleUpload.bind(this)}
 									/>
 									<label htmlFor="flat-button-file">
-										<Button variant="contained" component="span" className={classes.button}>
+                  <MuiThemeProvider theme={grey_theme}>
+										<Button  color="primary" variant="contained" component="span" className={classes.button}>
 											Select Images
 										</Button>
+                  </MuiThemeProvider>
 									</label>
 								</div>
 							</Grid>
