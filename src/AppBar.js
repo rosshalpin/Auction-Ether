@@ -49,9 +49,9 @@ class ButtonAppBar extends React.Component {
 		return (
 			<div className={classes.root}>
 				<MuiThemeProvider theme={green_theme}>
-					<AppBar style={{boxShadow: "none"}} position="fixed">
+					<AppBar style={{boxShadow: "none"}} position="absolute">
 						<Toolbar>
-              <Typography style={{fontWeight: 'bold'}} className={classes.title} variant="h6" color="inherit">
+              <Typography style={{fontWeight: 'bold', fontColor: '#424242'}} className={classes.title} variant="h4" color="inherit">
                 Renther
               </Typography>
 							<Modal ex={this.props.ex.EUR} web3={web3}/>
