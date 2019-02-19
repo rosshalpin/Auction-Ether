@@ -13,7 +13,7 @@ contract Auction {
   address public highestBidder;
   Ledger public auctionLedger;
   uint public highestBid;
-  mapping(address => uint) internal balanceOf; // Contains the current balance of un-withdrawn bid at address
+  mapping(address => uint) public balanceOf; // Contains the current balance of un-withdrawn bid at address
   uint public reserveValue;
   uint public minIncrementValue;
   uint public auctionBegin;
@@ -45,7 +45,7 @@ contract Auction {
   /// @notice To withdraw funds when outbid
   /// @dev Withdrawal pattern(balance set to zero before withdrawal) used here to prevent re-entrency attack
   /// 'external' saves gas over using public, function is only ever called externally
-  function withdrawBid() external {
+  function withdrawBid() external payable {
     assert(msg.sender != highestBidder);
     uint amount = balanceOf[msg.sender]; // This is the balance to be withdrawn
     balanceOf[msg.sender] = 0;  // Balance must be set to zero before transfer
@@ -86,5 +86,9 @@ contract Auction {
   
   function getBidLog() external view returns(uint[]){
     return bidLog;
+  }
+  
+  function destroy() external {
+      selfdestruct(msg.sender);
   }
 }
