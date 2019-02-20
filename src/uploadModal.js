@@ -6,7 +6,6 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import Grid from '@material-ui/core/Grid';
-import green from '@material-ui/core/colors/green';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import ipfs from './ipfs';
 import SnackBar from './SnackBar';
