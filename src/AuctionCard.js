@@ -11,7 +11,6 @@ import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import {MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import Divider from '@material-ui/core/Divider';
 
 import BidTable from "./BidTable";
 import Carousel from "./carousel";
@@ -43,17 +42,6 @@ const red_theme = createMuiTheme({
 		primary: {
        main: '#e53935',
     }
-	},
-	typography: {
-		useNextVariants: true,
-	},
-});
-
-const main_theme = createMuiTheme({
-	palette: {
-		primary: {
-			main: '#fafafa',
-		}
 	},
 	typography: {
 		useNextVariants: true,
@@ -127,7 +115,7 @@ class AuctionCard extends  Component {
       
       const {auctionFunc, web3} = this.state;
       const accounts = await web3.eth.getAccounts();
-      const bid = await auctionFunc.methods
+      await auctionFunc.methods
         .placeBid()
         .send({ from: accounts[0], value: web3.utils.toWei(this.state.bidAmount, 'ether') })
         .then(result => result); 
@@ -139,7 +127,6 @@ class AuctionCard extends  Component {
     await this.setState({withdrawDisabled: true});
     const {auctionFunc, web3} = this.state;
     const accounts = await web3.eth.getAccounts();
-    console.log('hello');
     var withdraw = await auctionFunc.methods
       .withdrawBid()
       .send({ from: accounts[0] })

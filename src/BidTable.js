@@ -4,9 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 
@@ -39,8 +37,8 @@ class SimpleTable extends React.Component {
         alignItems="center"
         style={this.displayEmpty()}
       >
-        <Typography variant="button" style={{color: '#E7E7E7'}}>
-          Such Empty...
+        <Typography variant="button" style={{color: '#C9C9C9'}}>
+          NO BIDS YET...
         </Typography>
       </Grid>
     );

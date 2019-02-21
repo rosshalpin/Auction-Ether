@@ -307,9 +307,9 @@ class SimpleModal extends React.Component {
 	}
 	
 	handleUpload = async (event) => {
-		var files = event.target.files;
-    if(files.length > 5){
-      
+		var files = [...event.target.files]
+    if(files.length >= 5){
+      files = files.slice(0,5);
     }
 		var files_64 = []
 		try {
@@ -520,7 +520,7 @@ class SimpleModal extends React.Component {
 									/>
 									<label htmlFor="flat-button-file">
                   <MuiThemeProvider theme={grey_theme}>
-										<Button  color="primary" variant="contained" component="span" className={classes.button}>
+										<Button  color="primary" variant="outlined" component="span" className={classes.button}>
 											Select Images
 										</Button>
                   </MuiThemeProvider>
@@ -529,7 +529,7 @@ class SimpleModal extends React.Component {
 							</Grid>
 							<Grid item>
 								<MuiThemeProvider theme={green_theme}>
-									<Button onClick={this.handleDeploy} disabled={this.state.disableButton} color="primary" variant="contained" component="span" className={classes.button}>
+									<Button onClick={this.handleDeploy} disabled={this.state.disableButton} color="primary" variant="outlined" component="span" className={classes.button}>
 										Deploy
 									</Button>
 								</MuiThemeProvider>
