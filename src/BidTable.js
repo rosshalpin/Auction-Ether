@@ -8,6 +8,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import ListItemText from '@material-ui/core/ListItemText';
 
+
 const styles = theme => ({
   table: {
     height: 200,
@@ -34,15 +35,6 @@ class SimpleTable extends React.Component {
       <div className={classes.tableWrapper}>
         <Table padding="dense" className={classes.table}>
           <TableBody>
-            {this.state.data.map( (row,x) => (
-              <TableRow key={"t"+x}>
-                <TableCell  component="th" scope="row">
-                  {"Ξ " + row[1] + " (€" + (row[1] * this.props.ex).toFixed(2)+")"}
-                  <br/>
-                  {row[0]}
-                </TableCell>
-              </TableRow>
-            ))}
             {this.state.data.map( (row,x) => (
               <TableRow key={"t"+x}>
                 <TableCell  component="th" scope="row">

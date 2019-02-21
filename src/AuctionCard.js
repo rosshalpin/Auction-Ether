@@ -14,6 +14,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import Divider from '@material-ui/core/Divider';
 
 import BidTable from "./BidTable";
+import Carousel from "./carousel";
 
 function getModalStyle() {
   const top = 50;
@@ -62,11 +63,11 @@ const main_theme = createMuiTheme({
 const styles = theme => ({
   paper: {
 		position: 'absolute',
-		width: theme.spacing.unit * 100,
+		width: theme.spacing.unit * 110,
 		backgroundColor: theme.palette.background.paper,
 		boxShadow: theme.shadows[5],
 		padding: theme.spacing.unit * 4,
-		borderRadius: 2,
+		borderRadius: 4,
 		outline: 'none',
   },
 });
@@ -211,63 +212,69 @@ class AuctionCard extends  Component {
         onClose={this.handleClose}
       >
         <div style={getModalStyle()} className={classes.paper}>
-            <Grid container justify="flex-end" direction="row" alignItems="center">
-            <Grid
-              container
-              direction="row"
-              justify="space-around"
-              alignItems="center"
-              style={{width: '400px', border: '1px solid #EFEFEF', borderRadius: '0px 4px 4px 0px', paddingTop: 5}}
-            >
-              {/* BID INPUT AMOUNT */}
-              <Grid item>
-                <MuiThemeProvider theme={main_theme}>
-                  <TextField
-                    id="outlined-helperText"
-                    placeholder="ETH"
-                    className={classes.textField}
-                    label={"€ " + (this.props.ex.EUR * this.state.bidAmount).toFixed(2)}
-                    margin="dense"
-                    variant="outlined"
-                    style={{width: "150px"}}
-                    required onChange={this.handleBidAmount}
-                    color='#fafafa'
-                    InputProps={{
-                      startAdornment: 
-                      <InputAdornment position="start">
-                        <img style={ethStyle} src="https://www.ethereum.org/images/logos/ETHEREUM-ICON_Black_small.png" alt=""/>
-                      </InputAdornment>,
-                    }}
-                  />
-                </MuiThemeProvider>
+            <Grid container justify="center" direction="row" alignItems="center">
+              <Grid container justify="flex-start" style={{width: '400px'}}>
+                {/* Image carousel */}
+                <Grid item>
+                  <Carousel images={this.state.images} />
+                </Grid>
               </Grid>
-              {/* WITHDRAW BUTTON */}
-              <Grid item>
-                <MuiThemeProvider theme={red_theme}>
-                  <Button onClick={this.handleWithdraw} variant="contained" disabled={this.state.withdrawDisabled} color="primary" className={classes.button} >
-                    WITHDRAW
-                  </Button>
-                </MuiThemeProvider>
+              <Grid
+                container
+                direction="row"
+                justify="space-around"
+                alignItems="center"
+                style={{width: '400px', border: '1px solid #EFEFEF', borderRadius: '0px 4px 4px 0px', paddingTop: 5}}
+              >
+                {/* BID INPUT AMOUNT */}
+                <Grid item>
+                  <MuiThemeProvider theme={main_theme}>
+                    <TextField
+                      id="outlined-helperText"
+                      placeholder="ETH"
+                      className={classes.textField}
+                      label={"€ " + (this.props.ex.EUR * this.state.bidAmount).toFixed(2)}
+                      margin="dense"
+                      variant="outlined"
+                      style={{width: "150px"}}
+                      required onChange={this.handleBidAmount}
+                      color='#fafafa'
+                      InputProps={{
+                        startAdornment: 
+                        <InputAdornment position="start">
+                          <img style={ethStyle} src="https://www.ethereum.org/images/logos/ETHEREUM-ICON_Black_small.png" alt=""/>
+                        </InputAdornment>,
+                      }}
+                    />
+                  </MuiThemeProvider>
+                </Grid>
+                {/* WITHDRAW BUTTON */}
+                <Grid item>
+                  <MuiThemeProvider theme={red_theme}>
+                    <Button onClick={this.handleWithdraw} variant="contained" disabled={this.state.withdrawDisabled} color="primary" className={classes.button} >
+                      WITHDRAW
+                    </Button>
+                  </MuiThemeProvider>
+                </Grid>
+                {/* BID BUTTON */}
+                <Grid item>
+                  <MuiThemeProvider theme={green_theme}>
+                    <Button onClick={this.handleBid} disabled={this.state.hasBalance} variant="contained" color="primary" className={classes.button} >
+                      Bid
+                    </Button>
+                  </MuiThemeProvider>
+                </Grid>
+                {/* TITLE BIDDING HISTORY */}
+                <Grid style={{width: 400, marginLeft: 10}} item>
+                  <Typography  variant="h6">
+                    Bidding History
+                  </Typography>               
+                </Grid>
+                {/* BIDDING LIST */}
+                <Grid style={{width: 400}} item>
+                  <BidTable data={this.state.biddingLog} ex={this.props.ex.EUR} />
+                </Grid>
               </Grid>
-              {/* BID BUTTON */}
-              <Grid item>
-                <MuiThemeProvider theme={green_theme}>
-                  <Button onClick={this.handleBid} disabled={this.state.hasBalance} variant="contained" color="primary" className={classes.button} >
-                    Bid
-                  </Button>
-                </MuiThemeProvider>
-              </Grid>
-              {/* TITLE BIDDING HISTORY */}
-              <Grid style={{width: 400, marginLeft: 10}} item>
-                <Typography  variant="h6">
-                  Bidding History
-                </Typography>               
-              </Grid>
-              {/* BIDDING LIST */}
-              <Grid style={{width: 400}} item>
-                <BidTable data={this.state.biddingLog} ex={this.props.ex.EUR} />
-              </Grid>
-            </Grid>
             </Grid>
         </div>
       </Modal>

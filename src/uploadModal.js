@@ -43,7 +43,7 @@ const styles = theme => ({
 		backgroundColor: theme.palette.background.paper,
 		boxShadow: theme.shadows[5],
 		padding: theme.spacing.unit * 4,
-		borderRadius: 2,
+		borderRadius: 4,
 		outline: 'none',
 	},
 	root: {
@@ -379,7 +379,6 @@ class SimpleModal extends React.Component {
 					},
 				}}
 				style={{ width: width}}
-        
 				helperText={desc}
 				margin="dense"
 				variant="outlined"
