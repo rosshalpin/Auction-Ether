@@ -228,7 +228,7 @@ class AuctionCard extends  Component {
               >
                 {/* BID INPUT AMOUNT */}
                 <Grid item>
-                  <MuiThemeProvider theme={main_theme}>
+                  <MuiThemeProvider theme={green_theme}>
                     <TextField
                       id="outlined-helperText"
                       placeholder="ETH"
@@ -251,7 +251,7 @@ class AuctionCard extends  Component {
                 {/* WITHDRAW BUTTON */}
                 <Grid item>
                   <MuiThemeProvider theme={red_theme}>
-                    <Button onClick={this.handleWithdraw} variant="contained" disabled={this.state.withdrawDisabled} color="primary" className={classes.button} >
+                    <Button onClick={this.handleWithdraw} variant="outlined" disabled={this.state.withdrawDisabled} color="primary" className={classes.button} >
                       WITHDRAW
                     </Button>
                   </MuiThemeProvider>
@@ -259,7 +259,7 @@ class AuctionCard extends  Component {
                 {/* BID BUTTON */}
                 <Grid item>
                   <MuiThemeProvider theme={green_theme}>
-                    <Button onClick={this.handleBid} disabled={this.state.hasBalance} variant="contained" color="primary" className={classes.button} >
+                    <Button onClick={this.handleBid} disabled={this.state.hasBalance} variant="outlined" color="primary" className={classes.button} >
                       Bid
                     </Button>
                   </MuiThemeProvider>

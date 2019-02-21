@@ -35,17 +35,6 @@ const tutorialSteps = [
 const white_theme = createMuiTheme({
 	palette: {
 		primary: {
-       main: 'rgb(255,255,255)',
-    }
-	},
-	typography: {
-		useNextVariants: true,
-	},
-});
-
-const black_theme = createMuiTheme({
-	palette: {
-		primary: {
        main: '#fafafa',
     }
 	},
@@ -113,13 +102,13 @@ class TextMobileStepper extends React.Component {
           activeStep={activeStep}
           className={classes.mobileStepper}
           nextButton={
-            <Button color="primary" size="small" onClick={this.handleNext} disabled={activeStep === maxSteps - 1}>
+            <Button color="primary" variant="outlined" size="small" onClick={this.handleNext} disabled={activeStep === maxSteps - 1}>
               Next
               {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
             </Button>
           }
           backButton={
-            <Button color="primary" size="small" onClick={this.handleBack} disabled={activeStep === 0}>
+            <Button color="primary" variant="outlined" size="small" onClick={this.handleBack} disabled={activeStep === 0}>
               {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
               Back
             </Button>

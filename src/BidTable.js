@@ -7,7 +7,8 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import ListItemText from '@material-ui/core/ListItemText';
-
+import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
 
 const styles = theme => ({
   table: {
@@ -21,14 +22,45 @@ const styles = theme => ({
 
 class SimpleTable extends React.Component {
   
+  state = {
+    data: this.props.data
+  }
+  
   componentDidMount = () => {
     console.log(this.props);
   }
   
-  state = {
-    data: this.props.data
+  EmptyLog = () => {
+    return(
+      <Grid
+        container
+        direction="column"
+        justify="center"
+        alignItems="center"
+        style={this.displayEmpty()}
+      >
+        <Typography variant="button" style={{color: '#E7E7E7'}}>
+          Such Empty...
+        </Typography>
+      </Grid>
+    );
   }
-
+  
+  displayEmpty = () => {
+    if(this.state.data.length !== 0){
+      return {
+        display: 'none',
+        width: 398, 
+        height: 200
+      }
+    }else{
+      return {
+        width: 398, 
+        height: 200
+      }
+    }
+  }
+ 
   render () {
     const { classes } = this.props;
     return (
@@ -44,8 +76,10 @@ class SimpleTable extends React.Component {
                 </TableCell>
               </TableRow>
             ))}
+            
           </TableBody>
         </Table>
+        {this.EmptyLog()}
       </div>
     );
   }

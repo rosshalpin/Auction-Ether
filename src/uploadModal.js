@@ -307,7 +307,10 @@ class SimpleModal extends React.Component {
 	}
 	
 	handleUpload = async (event) => {
-		const files = event.target.files;
+		var files = event.target.files;
+    if(files.length > 5){
+      
+    }
 		var files_64 = []
 		try {
 			for(var file of files){

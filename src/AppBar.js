@@ -51,12 +51,12 @@ class ButtonAppBar extends React.Component {
 				<MuiThemeProvider theme={green_theme}>
 					<AppBar style={{boxShadow: "none"}} position="absolute">
 						<Toolbar>
-              <Typography style={{fontWeight: 'bold', fontColor: '#424242'}} className={classes.title} variant="h4" color="inherit">
+              <Typography style={{pointerEvents: 'none',fontWeight: 'bold', fontColor: '#1E1E1E'}} className={classes.title} variant="h4" color="inherit">
                 Renther
               </Typography>
 							<Modal ex={this.props.ex.EUR} web3={web3}/>
               <Tooltip placement="bottom" title="Sort Price">
-                <IconButton onClick={this.click} className={classes.sortButton} color="inherit" aria-label="Menu">
+                <IconButton style={{border: '1px solid #B1B1B1'}} onClick={this.click} className={classes.sortButton} color="inherit" aria-label="Menu">
                   <SortIcon />
                 </IconButton>
               </Tooltip>
