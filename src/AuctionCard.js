@@ -112,14 +112,12 @@ class AuctionCard extends  Component {
   handleBid = async () => {
     await this.setState({hasBalance: true});
     if(this.state.bidAmount > 0){
-      
       const {auctionFunc, web3} = this.state;
       const accounts = await web3.eth.getAccounts();
       await auctionFunc.methods
         .placeBid()
         .send({ from: accounts[0], value: web3.utils.toWei(this.state.bidAmount, 'ether') })
         .then(result => result); 
-      //console.log(bid);
     }
   }
   

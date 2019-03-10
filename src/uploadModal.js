@@ -343,7 +343,6 @@ class SimpleModal extends React.Component {
 		}
 		const buffer = await Buffer.from(JSON.stringify(details));
 		await ipfs.add(buffer, (err, ipfsHash) => {
-			//console.log(err,ipfsHash);
 			if(err){
 				console.log(err)
 			}else{

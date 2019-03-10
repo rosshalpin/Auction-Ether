@@ -43,6 +43,7 @@ const styles = theme => ({
       marginLeft: theme.spacing.unit * 3,
       width: 'auto',
     },
+    transform: 'scale(0.82)',
   },
   searchIcon: {
     width: theme.spacing.unit * 9,
@@ -68,6 +69,11 @@ const styles = theme => ({
       width: 200,
     },
   },
+  searchContainer: {
+    position: 'absolute',
+    left: '50%',
+    transform: 'translate(-50%)',
+  }
 });
 
 const green_theme = createMuiTheme({
@@ -98,20 +104,20 @@ class ButtonAppBar extends React.Component {
                 Renther
               </Typography>
 							<Modal ex={this.props.ex.EUR} web3={web3}/>
-              
-              <div className={classes.search}>
-                <div className={classes.searchIcon}>
-                  <SearchIcon />
+              <div className={classes.searchContainer}>
+                <div className={classes.search}>
+                  <div className={classes.searchIcon}>
+                    <SearchIcon />
+                  </div>
+                  <InputBase
+                    placeholder="Search…"
+                    classes={{
+                      root: classes.inputRoot,
+                      input: classes.inputInput,
+                    }}
+                  />
                 </div>
-                <InputBase
-                  placeholder="Search…"
-                  classes={{
-                    root: classes.inputRoot,
-                    input: classes.inputInput,
-                  }}
-                />
               </div>
-              
               <Tooltip placement="bottom" title="Sort Price">
                 <IconButton style={{border: '1px solid #B1B1B1'}} onClick={this.click} className={classes.sortButton} color="inherit" aria-label="Menu">
                   <SortIcon />
