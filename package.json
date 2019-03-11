@@ -5,11 +5,13 @@
   "dependencies": {
     "@material-ui/core": "^3.4.0",
     "@material-ui/icons": "^3.0.1",
-    "firebase": "^5.5.7",
-    "ipfs-api": "^26.1.2",
+    "enzyme": "^3.9.0",
+    "enzyme-adapter-react-16": "^1.10.0",
+    "ipfs-http-client": "^29.1.1",
+    "jest-enzyme": "^7.0.2",
     "react": "^16.5.2",
     "react-dom": "^16.6.1",
-    "react-scripts": "^2.1.5",
+    "react-scripts": "^2.1.8",
     "solc": "^0.4.25",
     "truffle-hdwallet-provider": "0.0.6",
     "web3": "^1.0.0-beta.35"
@@ -17,7 +19,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "GENERATE_SOURCEMAP=false react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --env=jsdom --verbose=false",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
