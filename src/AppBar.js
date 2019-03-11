@@ -103,7 +103,7 @@ class ButtonAppBar extends React.Component {
               <Typography style={{pointerEvents: 'none',fontWeight: 'bold', fontColor: '#1E1E1E'}} className={classes.title} variant="h4" color="inherit">
                 Renther
               </Typography>
-							<Modal ex={this.props.ex.EUR} web3={web3}/>
+							<Modal ex={this.props.ex} web3={web3}/>
               <div className={classes.searchContainer}>
                 <div className={classes.search}>
                   <div className={classes.searchIcon}>

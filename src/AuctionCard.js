@@ -162,19 +162,18 @@ class AuctionCard extends  Component {
       .balanceOf(CurrentUserAddress[0])
       .call({ from: web3.eth.getAccounts[0] })
       .then(result => result);
-    //console.log(balance);
+
     if(balance > 0){
       await this.setState({hasBalance: true});
     }else{
       await this.setState({hasBalance: false});
     }
-    
     var highestBidder = await auctionFunc.methods
       .highestBidder()
       .call({ from: web3.eth.getAccounts[0] })
       .then(result => result);
     
-    if (balance > 0 && CurrentUserAddress[0] != highestBidder){
+    if (balance > 0 && CurrentUserAddress[0] !== highestBidder){
       await this.setState({withdrawDisabled: false});
     }else{
       await this.setState({withdrawDisabled: true});
@@ -218,7 +217,7 @@ class AuctionCard extends  Component {
                       id="outlined-helperText"
                       placeholder="ETH"
                       className={classes.textField}
-                      label={"€ " + (this.props.ex.EUR * this.state.bidAmount).toFixed(2)}
+                      label={"€ " + (this.props.ex * this.state.bidAmount).toFixed(2)}
                       margin="dense"
                       variant="outlined"
                       style={{width: "150px"}}
@@ -257,7 +256,7 @@ class AuctionCard extends  Component {
                 </Grid>
                 {/* BIDDING LIST */}
                 <Grid style={{width: 400}} item>
-                  <BidTable data={this.state.biddingLog} ex={this.props.ex.EUR} />
+                  <BidTable data={this.state.biddingLog} ex={this.props.ex} />
                 </Grid>
               </Grid>
             </Grid>
@@ -296,7 +295,7 @@ class AuctionCard extends  Component {
         </Typography>
         <Tooltip placement="top" title="Ether (Euro)">
           <Typography style={priceStyle}>
-            Ξ{this.state.amount} (€{(this.state.amount * this.props.ex.EUR).toFixed(2)})
+            Ξ{this.state.amount} (€{(this.state.amount * this.props.ex).toFixed(2)})
           </Typography>
         </Tooltip>
 				<CardActionArea onClick={this.handleOpen}>
