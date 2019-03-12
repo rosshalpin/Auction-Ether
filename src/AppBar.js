@@ -2,7 +2,7 @@ import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import { withStyles, MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import Modal from './uploadModal.js';
+import Modal from './UploadModal.js';
 import IconButton from '@material-ui/core/IconButton';
 import SortIcon from '@material-ui/icons/Sort';
 import Typography from '@material-ui/core/Typography';
@@ -29,7 +29,7 @@ const styles = theme => ({
     right: 30
   },
   search: {
-    position: 'relative',
+    
     borderRadius: theme.shape.borderRadius,
     backgroundColor: fade(theme.palette.common.black, 0),
     '&:hover': {
@@ -43,7 +43,7 @@ const styles = theme => ({
       marginLeft: theme.spacing.unit * 3,
       width: 'auto',
     },
-    transform: 'scale(0.82)',
+    transform: 'scale(1)',
   },
   searchIcon: {
     width: theme.spacing.unit * 9,
@@ -70,9 +70,7 @@ const styles = theme => ({
     },
   },
   searchContainer: {
-    position: 'absolute',
-    left: '50%',
-    transform: 'translate(-50%)',
+    position: 'relative',
   }
 });
 

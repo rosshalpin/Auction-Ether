@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from "react";
 import { withStyles, MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Modal from '@material-ui/core/Modal';
@@ -9,7 +9,7 @@ import Grid from '@material-ui/core/Grid';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import ipfs from './ipfs';
 import SnackBar from './SnackBar';
-import contract from "./contract";
+import contract from "./Contract.js";
 
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 function getModalStyle() {
@@ -241,7 +241,7 @@ const counties = [
   }
 ];
 
-class SimpleModal extends React.Component {
+class SimpleModal extends Component {
 	state = {
 		open: false,
 		beds: '',

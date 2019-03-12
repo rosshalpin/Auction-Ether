@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import "./App.css";
-import Web3 from "web3";
+import {web3} from "./Web3Provider.js";
 import AuctionCard from "./AuctionCard.js";
-import contract from "./contract";
+import contract from "./Contract";
 import AppBar from "./AppBar";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Grid from '@material-ui/core/Grid';
-const HDWalletProvider = require('truffle-hdwallet-provider');
+import handle from './ExchangeAPI';
 
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 
@@ -14,66 +14,27 @@ const request = require("request");
 
 var invert = false;
 
-class App extends Component {
+export class App extends Component {
   state = {
     cardArray: [],
     auctions: [],
 		addresses: [],
 		checked: false,
-		ledgerAbi: '',
-		ledger: '',
+		ledger: contract.ledger,
     exchange: 0,
-    web3: null
+    web3: null,
   };
 
   componentDidMount = async () => {
-    await this.enableWeb3(true);
-    await this.handleExchangeRate();
+    var rate = await handle();
+    this.setState({exchange: rate})
+
 		setInterval(async()=>{await this.getAddresses();}, 1000);
   }
   
-  tester = () =>{
-    return 5;
-  }
-  
-  handleExchangeRate = async () => {
-    var v = await request("https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=EUR", { json: true }, (err, res, body) => {
-      if (err) {
-        //return console.log(err);
-      } else {
-        this.setState({exchange: body.EUR});
-      }
-    });
-    return 5;
-  };
-
-  enableWeb3 = async (test) => {
-    if(test === true){
-      const provider = new HDWalletProvider(
-        '<REDACTED>',
-        'https://rinkeby.infura.io/v3/<REDACTED>'
-      );
-
-      const test_web3 = new Web3(provider);
-      await this.setState({web3: test_web3});
-      
-    }else {
-      await window.ethereum.enable();
-      const web3 = new Web3(window.ethereum);
-      await this.setState({web3: web3});
-    }
-    this.setState({ ledgerAbi: contract.ledger }); 
-		var ledger = new this.state.web3.eth.Contract(
-			JSON.parse(this.state.ledgerAbi),
-			"0x9d7c1161d3726313627bc4cdfa0c7acbc87efed5"
-		);
-		this.setState({ledger: ledger});
-    
-  };
-	
 	getAddresses = async () => {
 			var auctions = await this.state.ledger.methods.getAuctions()
-				.call({from: this.state.web3.eth.getAccounts[0]})
+				.call({from: web3.eth.getAccounts[0]})
 				.then(result => result);
 			var oldAddresses = this.state.addresses.slice(0);
       this.setState({ addresses: auctions });
@@ -91,10 +52,10 @@ class App extends Component {
     try {
       for (var address of addresses) {
         var auctionAbi = contract.interf;
-        var auction = new this.state.web3.eth.Contract(JSON.parse(auctionAbi), address);
+        var auction = new web3.eth.Contract(JSON.parse(auctionAbi), address);
         var auctionIPFS = await auction.methods
           .ipfsHash()
-          .call({ from: this.state.web3.eth.getAccounts[0] })
+          .call({ from: web3.eth.getAccounts[0] })
           .then(result => result);
         var auctionMediaURL = "https://gateway.ipfs.io/ipfs/" + auctionIPFS;
         await this.handleGetIPFS(auctionMediaURL, address, auction);
@@ -142,9 +103,9 @@ class App extends Component {
       <React.Fragment>
         <CssBaseline />
         <div className="App">
-          <AppBar web3={this.state.web3} contract={contract} sort={this.handleSort} ex={this.state.exchange} />
+          <AppBar web3={web3} contract={contract} sort={this.handleSort} ex={this.state.exchange} />
           <Grid style={{ marginTop: "85px"}} container justify="center" spacing={16}>
-            {this.state.auctions.map((content, x) => <AuctionCard key={content.address} data={content} ex={this.state.exchange} web3={this.state.web3}/>
+            {this.state.auctions.map((content, x) => <AuctionCard key={content.address} data={content} ex={this.state.exchange} web3={web3}/>
             )}
           </Grid>
         </div>

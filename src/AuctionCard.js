@@ -13,7 +13,7 @@ import {MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import InputAdornment from '@material-ui/core/InputAdornment';
 
 import BidTable from "./BidTable";
-import Carousel from "./carousel";
+import Carousel from "./Carousel";
 
 function getModalStyle() {
   const top = 50;
@@ -60,7 +60,7 @@ const styles = theme => ({
   },
 });
 
-class AuctionCard extends  Component {
+export class AuctionCard extends  Component {
   
 	state = {
 		images: this.props.data.media.images,

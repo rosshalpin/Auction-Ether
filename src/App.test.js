@@ -1,21 +1,20 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
-import { configure } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
+import React from "react";
+import { shallow, mount } from "enzyme";
+import App from "./App";
 
-configure({ adapter: new Adapter() });
-import {shallow, mount} from 'enzyme';
+describe("App components", () => {
+  it("should update correct state", async () => {
+    let wrapper = mount(<App />);
+
+    await wrapper.instance().tester();
+    wrapper = wrapper.update();
+    console.log(wrapper.state().test);
 
 
-const wrapper = mount(<App />);
-
-
-it('loads the data', async() => {
-  var v = await wrapper.instance().handleExchangeRate();
-  expect(v).toEqual(5);
-
+  });
 });
+
+
 
 
 
