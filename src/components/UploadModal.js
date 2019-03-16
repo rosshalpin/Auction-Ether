@@ -342,7 +342,7 @@ class SimpleModal extends Component {
 			txHash: '',
 		}
 		const buffer = await Buffer.from(JSON.stringify(details));
-		await ipfs.add(buffer, (err, ipfsHash) => {
+		await ipfs.provider().add(buffer, (err, ipfsHash) => {
 			if(err){
 				console.log(err)
 			}else{
