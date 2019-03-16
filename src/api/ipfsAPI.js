@@ -1,3 +1,13 @@
 const IPFS = require('ipfs-http-client');
-const ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
-export default ipfs;
+
+class ipfsAPI {
+  
+  static provider = () => {
+    const ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
+    return ipfs;
+  }
+  
+
+}
+
+export default ipfsAPI;
