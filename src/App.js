@@ -6,7 +6,7 @@ import contract from "./contract";
 import AppBar from "./components/AppBar";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Grid from '@material-ui/core/Grid';
-import ExchangeAPI from './api/exchangeAPI';
+import exchangeAPI from './api/exchangeAPI';
 
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 
@@ -26,23 +26,25 @@ export class App extends Component {
   };
 
   componentDidMount = async () => {
-    var rate = await ExchangeAPI();
+    var rate = await exchangeAPI();
     this.setState({exchange: rate})
 
 		setInterval(async()=>{await this.getAddresses();}, 1000);
   }
   
 	getAddresses = async () => {
+      //web3.js call
 			var auctions = await this.state.ledger.methods.getAuctions()
 				.call({from: web3.eth.getAccounts[0]})
 				.then(result => result);
+        
+        
 			var oldAddresses = this.state.addresses.slice(0);
       this.setState({ addresses: auctions });
       var newAddresses = this.state.addresses.slice(0);
       let difference = oldAddresses
-                 .filter(x => !newAddresses.includes(x))
-                 .concat(newAddresses.filter(x => !oldAddresses.includes(x)));  // https://stackoverflow.com/questions/1187518/how-to-get-the-difference-between-two-arrays-in-javascript    
-      
+       .filter(x => !newAddresses.includes(x))
+       .concat(newAddresses.filter(x => !oldAddresses.includes(x)));      
       if(oldAddresses.toString() !== this.state.addresses.toString() && this.state.auctions.length !== auctions.length){
         await this.handleContracts(difference);
       }
@@ -53,6 +55,8 @@ export class App extends Component {
       for (var address of addresses) {
         var auctionAbi = contract.interf;
         var auction = new web3.eth.Contract(JSON.parse(auctionAbi), address);
+        
+        //web3.js call
         var auctionIPFS = await auction.methods
           .ipfsHash()
           .call({ from: web3.eth.getAccounts[0] })
@@ -66,6 +70,8 @@ export class App extends Component {
   };
 	
 	handleGetIPFS = async (auctionMediaURL, address, auction) => {
+    
+    //http request
     await request(auctionMediaURL, { json: true }, (err, res, body) => {
       if (err) {
         return console.log(err);
@@ -82,10 +88,10 @@ export class App extends Component {
 				}) 
       }
     });
-
   };
 
   handleSort = async () => {
+    console.log(this.state.auctions);
     if(this.state.auctions.length > 1){
       var aucSort = this.state.auctions.slice(0);
       if(invert === false){
