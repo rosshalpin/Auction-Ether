@@ -7,9 +7,9 @@ import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import Grid from '@material-ui/core/Grid';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import ipfs from './ipfs';
+import ipfs from '../api/ipfsAPI';
 import SnackBar from './SnackBar';
-import contract from "./Contract.js";
+import contract from "../contract.js";
 
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 function getModalStyle() {

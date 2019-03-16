@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import "./App.css";
-import {web3} from "./Web3Provider.js";
-import AuctionCard from "./AuctionCard.js";
-import contract from "./Contract";
-import AppBar from "./AppBar";
+import {web3} from "./api/web3Provider.js";
+import AuctionCard from "./components/AuctionCard.js";
+import contract from "./contract";
+import AppBar from "./components/AppBar";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Grid from '@material-ui/core/Grid';
-import handle from './ExchangeAPI';
+import ExchangeAPI from './api/exchangeAPI';
 
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 
@@ -26,7 +26,7 @@ export class App extends Component {
   };
 
   componentDidMount = async () => {
-    var rate = await handle();
+    var rate = await ExchangeAPI();
     this.setState({exchange: rate})
 
 		setInterval(async()=>{await this.getAddresses();}, 1000);
@@ -66,7 +66,7 @@ export class App extends Component {
   };
 	
 	handleGetIPFS = async (auctionMediaURL, address, auction) => {
-    var req = await request(auctionMediaURL, { json: true }, (err, res, body) => {
+    await request(auctionMediaURL, { json: true }, (err, res, body) => {
       if (err) {
         return console.log(err);
       } else {
