@@ -53,6 +53,7 @@ export class App extends Component {
           await this.setState({
             auctions: [...this.state.auctions, nAuction]
           }) 
+          //console.log(nAuction);
         }
       } catch (e) {
         console.log(e);

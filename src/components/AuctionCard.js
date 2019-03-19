@@ -91,7 +91,7 @@ export class AuctionCard extends  Component {
 	}
   
   componentDidMount = () => {
-    console.log(this.state.media);
+    
     this.handleContract();
     this.handleBidderLog();
     this.handleBalanceOf();
@@ -220,7 +220,7 @@ export class AuctionCard extends  Component {
                 direction="row"
                 justify="space-around"
                 alignItems="center"
-                style={{width: '400px', border: '1px solid #EFEFEF', borderRadius: '0px 4px 0px 0px', paddingTop: 5}}
+                style={{width: '400px', border: '1px solid #EFEFEF', borderRadius: '0px 4px 4px 0px', paddingTop: 5}}
               >
                 {/* BID INPUT AMOUNT */}
                 <Grid item>
@@ -280,6 +280,9 @@ export class AuctionCard extends  Component {
                   }
                   return null
                 })}
+              </Grid>
+              <Grid item>
+                <Chip color="primary" href={"https://rinkeby.etherscan.io/address/"+this.props.data.address} variant="outlined" key={"address"} label={this.props.data.address} clickable component="a" className={classes.chip} />
               </Grid>
               <Grid item>
                 <TextField
