@@ -1,14 +1,10 @@
 import React, { Component } from "react";
 import "./App.css";
-import web3API from "./api/web3API.js";
 import AuctionCard from "./components/AuctionCard.js";
 import contract from "./contract";
 import AppBar from "./components/AppBar";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Grid from '@material-ui/core/Grid';
-import ipfs from './api/ipfsAPI';
-
-var web3 = web3API.enable();
 
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 
@@ -29,7 +25,11 @@ export class App extends Component {
     super(props);
     this.handleExchange(this.props.exchangeAPI);
     //setInterval(async()=>{await this.getAddresses(this.props.auctions)}, 1000);
-    setInterval(async()=>{await this.handleContracts(this.getAddresses,this.props.auctions)}, 1000);
+    setInterval(async()=>{await this.handleContracts(this.getAddresses,this.props.web3API, this.props.ipfsAPI)}, 1000);
+  }
+  
+  componentDidMount = async () => {
+    this.setState({web3: new this.props.web3API().api})
   }
   
   handleExchange = async(exchangeAPI) =>{
@@ -52,18 +52,22 @@ export class App extends Component {
       }
 	}
 
-  handleContracts = async (getAddresses,auctions) => {
+  handleContracts = async (getAddresses, web3API, ipfsAPI) => {
+
+    let auctions = await web3API.getAuctions(contract.ledger);
     let addresses = await getAddresses(auctions);
     if(addresses != null){
       try {
         for (let address of addresses) {
           let auctionAbi = contract.interf;
-          let auction = new web3.eth.Contract(JSON.parse(auctionAbi), address);
           
-          //web3.js call
+          let auction = new this.state.web3.eth.Contract(JSON.parse(auctionAbi), address);
+          
+          //web3 api call
           var auctionIPFS = await web3API.getIPFS(auction);
-
-          let nAuction = await ipfs.get(auctionIPFS, address, auction, contract);
+          
+          //ipfs api call
+          let nAuction = await ipfsAPI.get(auctionIPFS, address, auction, contract);
           await this.setState({
             auctions: [...this.state.auctions, nAuction]
           }) 
@@ -90,6 +94,7 @@ export class App extends Component {
   }
   
   render() {
+    let {web3} = this.state;
     return (
       <React.Fragment>
         <CssBaseline />

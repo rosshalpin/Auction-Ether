@@ -5,9 +5,12 @@ let web3 = null;
 const test = true;
 
 
-class web3API { 
-  static enable() {
-    
+class web3API {
+
+  constructor(api){
+    this.api = this.enable();
+  }
+  enable() {
     if(test === true){
       const provider = new HDWalletProvider(
         _mnemonic,
