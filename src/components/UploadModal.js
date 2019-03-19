@@ -391,7 +391,7 @@ class SimpleModal extends Component {
 		})
 	}
 	
-	deployContract = async () => {
+  deployContract = async () => {
 		const web3 = await this.props.web3;
 		const accounts = await web3.eth.getAccounts();
 		const { interf, bytecode} = contract;

@@ -131,7 +131,7 @@ class ButtonAppBar extends React.Component {
     return fuse;
   }
   
-  handleSearch = (event) =>{
+  handleSearch = (event) => {
     let fuse = this.search();
     console.log(fuse);
   }

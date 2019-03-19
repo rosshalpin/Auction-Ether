@@ -7,7 +7,7 @@ class PositionedSnackbar extends React.Component {
     open: false,
   };
 	
-	componentDidMount() {
+	componentDidMount = () => {
 		console.log(this.props);
     this.setState({ open: true,});
 	}

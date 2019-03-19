@@ -1,21 +1,21 @@
 import Web3 from "web3";
 const HDWalletProvider = require('truffle-hdwallet-provider');
 
-let web3 = null
+let web3 = null;
+const test = true;
 
 class web3API {
   static enable() {
     
-    window.ethereum.enable();
-    web3 = new Web3(window.ethereum);
-    
-    const test = false;
     if(test === true){
       const provider = new HDWalletProvider(
         '<REDACTED>',
         'https://rinkeby.infura.io/v3/<REDACTED>'
       );
       web3 = new Web3(provider);
+    }else{
+      window.ethereum.enable();
+      web3 = new Web3(window.ethereum);
     }
     return web3;
   }
@@ -33,6 +33,5 @@ class web3API {
       .then(result => result);
   }
 }
-
 
 export default web3API;
