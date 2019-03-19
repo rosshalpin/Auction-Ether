@@ -9,9 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 
 const styles = theme => ({
-  table: {
-    height: 200,
-  },
+
   tableWrapper: {
     overflowY: 'auto',
     height: 200

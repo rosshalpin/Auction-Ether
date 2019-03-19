@@ -291,42 +291,45 @@ class SimpleModal extends Component {
       txHash: [],
       color: 'green',
       disableButton: false,
+      date: ''
 		});
 	};
   
   currentTime = () => {
-    var date = new Date(); 
+    let today = new Date().getTime() / 1000;
+    let date = new Date(1970, 0, 1); // Epoch
+    date.setSeconds(today + 86400);
+
     var options = {
         year: "numeric",
         month: "2-digit",
         day: "numeric"
     };
     var time = date.toLocaleDateString('eu-ES', options);
-    
     return time;
   }
 
-  
   handleTime = (event) => {
-    
     var inputDate = new Date(event.target.value).getTime() / 1000;
-    console.log(inputDate);
-    
     var getDate = new Date();
     var currentDate = getDate.getTime() / 1000;
     
-    if(inputDate < currentDate ){
+    if(inputDate < currentDate + 86400 ){
       var options = {
           year: "numeric",
           month: "2-digit",
           day: "numeric"
       };
-      var time = getDate.toLocaleDateString('eu-ES', options);
+      
+      let today = new Date().getTime() / 1000;
+      let date = new Date(1970, 0, 1); // Epoch
+      date.setSeconds(today + 86400);
+     
+      var time = date.toLocaleDateString('eu-ES', options);
       event.target.value = time;
+    }else{
+      this.setState({ date: inputDate });
     }
-    
-    
-    
   }
 	
 	handleWordCount = (event) => {
@@ -368,27 +371,35 @@ class SimpleModal extends Component {
 	}
 
 	handleUploadIPFS = async () => {
-    this.state.disableButton = true;
-		const details = {
-			beds: this.state.beds,
-			rent_type: this.state.rent_type,
-			desc: this.state.desc,
-			amount: this.state.amount,
-			baths: this.state.baths,
-			furnished: this.state.furnished,
-			images: this.state.images,
-			txHash: '',
-		}
-		const buffer = await Buffer.from(JSON.stringify(details));
-		await ipfs.provider().add(buffer, (err, ipfsHash) => {
-			if(err){
-				console.log(err)
-			}else{
-				this.setState({ ipfsHash: ipfsHash[0].hash });
-				this.deployContract();
-				this.handleClose();
-			}
-		})
+    
+    if(this.state.date !== ''){
+
+      this.setState({ disableButton: true});
+      const details = {
+        beds: this.state.beds,
+        rent_type: this.state.rent_type,
+        desc: this.state.desc,
+        amount: this.state.amount,
+        baths: this.state.baths,
+        furnished: this.state.furnished,
+        images: this.state.images,
+        county: this.state.county,
+        town: this.state.town,
+      }
+      console.log(details);
+
+      const buffer = await Buffer.from(JSON.stringify(details));
+      await ipfs.provider().add(buffer, (err, ipfsHash) => {
+        if(err){
+          console.log(err)
+        }else{
+          this.setState({ ipfsHash: ipfsHash[0].hash });
+          this.deployContract();
+          this.handleClose();
+        }
+      })
+
+    }
 	}
 	
   deployContract = async () => {
@@ -396,7 +407,7 @@ class SimpleModal extends Component {
 		const accounts = await web3.eth.getAccounts();
 		const { interf, bytecode} = contract;
 		const result = await new web3.eth.Contract(JSON.parse(interf))
-			.deploy({ data: '0x'+ bytecode, arguments: [1,1,50000,this.state.ipfsHash] })
+			.deploy({ data: '0x'+ bytecode, arguments: [1,1,this.state.date,this.state.ipfsHash] })
 			.send({ gas: '2000000', value: web3.utils.toWei('0.0002', 'ether'), from: accounts[0] });
 		console.log('Contract deployed to', result.options.address);
 		var nHash = this.state.txHash;
@@ -474,7 +485,7 @@ class SimpleModal extends Component {
                     value={this.state.amount}
                     onChange={this.handleChange('amount')}
                     margin="dense"
-                    helperText="Reserve Amount"
+                    helperText="Initial Price"
                     style={{ width: '180px'}}
                     label={"€ " + (this.props.ex * this.state.amount).toFixed(2)}
                     InputProps={{
@@ -489,6 +500,7 @@ class SimpleModal extends Component {
                 <TextField
                   id="outlined-helperText"
                   type="date"
+                  
                   helperText="End Date"
                   margin="dense"
                   onChange={this.handleTime}
@@ -517,6 +529,7 @@ class SimpleModal extends Component {
                   margin="dense"
                   variant="outlined"
                   style={{width: "180px"}}
+                  onChange = {this.handleChange('town')}
                 />
               </Grid>
               {/* COUNTY */}
@@ -567,7 +580,7 @@ class SimpleModal extends Component {
 									/>
 									<label htmlFor="flat-button-file">
                   <MuiThemeProvider theme={green_theme}>
-										<Button  color="primary" variant="outlined" component="span" className={classes.button}>
+										<Button disabled={this.state.disableButton}  color="primary" variant="outlined" component="span" className={classes.button}>
 											Select Images
 										</Button>
                   </MuiThemeProvider>

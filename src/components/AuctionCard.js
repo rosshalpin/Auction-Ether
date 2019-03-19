@@ -11,6 +11,7 @@ import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import {MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import Chip from '@material-ui/core/Chip';
 
 import BidTable from "./BidTable";
 import Carousel from "./Carousel";
@@ -58,6 +59,14 @@ const styles = theme => ({
 		borderRadius: 4,
 		outline: 'none',
   },
+  chip: {
+    marginTop: theme.spacing.unit,
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+  },
+  multilineColor:{
+    color:'black'
+  }
 });
 
 export class AuctionCard extends  Component {
@@ -78,12 +87,15 @@ export class AuctionCard extends  Component {
     biddingLog: [],
     hasBalance: false,
     withdrawDisabled: true,
+    media: this.props.data.media,
 	}
   
-  componentDidMount = async () => {
+  componentDidMount = () => {
+    console.log(this.state.media);
     this.handleContract();
     this.handleBidderLog();
     this.handleBalanceOf();
+    
     setInterval(async()=>{
       await this.handleBidderLog();
       await this.handleBalanceOf();
@@ -208,7 +220,7 @@ export class AuctionCard extends  Component {
                 direction="row"
                 justify="space-around"
                 alignItems="center"
-                style={{width: '400px', border: '1px solid #EFEFEF', borderRadius: '0px 4px 4px 0px', paddingTop: 5}}
+                style={{width: '400px', border: '1px solid #EFEFEF', borderRadius: '0px 4px 0px 0px', paddingTop: 5}}
               >
                 {/* BID INPUT AMOUNT */}
                 <Grid item>
@@ -258,6 +270,34 @@ export class AuctionCard extends  Component {
                 <Grid style={{width: 400}} item>
                   <BidTable data={this.state.biddingLog} ex={this.props.ex} />
                 </Grid>
+              </Grid>
+            </Grid>
+            <Grid container style={{paddingLeft:'10px'}} alignItems="center">
+              <Grid item>
+                {Object.entries(this.state.media).map((row,x) =>{
+                  if(row[0] !== "images" && row[0] !== "amount" && row[0] !== "desc"){
+                    return(<Chip variant="outlined" key={"t"+x} label={row[1]} className={classes.chip} />);
+                  }
+                  return null
+                })}
+              </Grid>
+              <Grid item>
+                <TextField
+                  placeholder="Description"
+                  disabled
+                  multiline={true}
+                  rows={3}
+                  style = {{width: '800px'}}
+                  value= {this.state.media.desc}
+                  margin="dense"
+                  variant="outlined"
+                  InputProps={{
+                    readOnly: true,
+                    classes: {
+                      input: classes.multilineColor
+                    }
+                  }}
+                />
               </Grid>
             </Grid>
         </div>
