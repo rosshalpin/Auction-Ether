@@ -50,7 +50,6 @@ export class App extends Component {
       }else{
         return null;
       }
-      
 	}
 
   handleContracts = async (getAddresses,auctions) => {
