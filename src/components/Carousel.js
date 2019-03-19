@@ -41,10 +41,9 @@ const styles = theme => ({
   }
 });
 
-class TextMobileStepper extends React.Component {
+class Carousel extends React.Component {
   state = {
     activeStep: 0,
-    images: this.props.images
   };
 
   handleNext = () => {
@@ -62,13 +61,13 @@ class TextMobileStepper extends React.Component {
   render() {
     const { classes, theme } = this.props;
     const { activeStep } = this.state;
-    const maxSteps = this.state.images.length;
+    const maxSteps = this.props.images.length;
 
     return (
       <div className={classes.root}>
         <img
           className={classes.img}
-          src={this.state.images[activeStep]}
+          src={this.props.images[activeStep]}
           alt={[activeStep]}
         />
         <MuiThemeProvider theme={white_theme}>
@@ -95,9 +94,9 @@ class TextMobileStepper extends React.Component {
   }
 }
 
-TextMobileStepper.propTypes = {
+Carousel.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(TextMobileStepper);
+export default withStyles(styles, { withTheme: true })(Carousel);

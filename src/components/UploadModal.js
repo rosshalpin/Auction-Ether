@@ -12,6 +12,7 @@ import SnackBar from './SnackBar';
 import contract from "../contract.js";
 
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
+
 function getModalStyle() {
 	const top = 50;
 	const left = 50;
@@ -54,7 +55,7 @@ const styles = theme => ({
   },
 });
 
-const green_theme = createMuiTheme({
+const blue_theme = createMuiTheme({
 	palette: {
 		primary: {
        main: '#2196f3',
@@ -65,7 +66,7 @@ const green_theme = createMuiTheme({
 	},
 });
 
-const grey_theme = createMuiTheme({
+const green_theme = createMuiTheme({
 	palette: {
 		primary: {
        main: '#43a047',
@@ -253,11 +254,13 @@ class SimpleModal extends Component {
 		baths: '',
 		furnished: '',
     county: '',
+    town: '',
 		images: [],
 		ipfs: '',
 		txHash: [],
     color: 'green',
     disableButton: false,
+    date: ''
 	};
 	
 	handleChange = name => event => {
@@ -272,24 +275,59 @@ class SimpleModal extends Component {
 
 	handleClose = () => {
 		this.setState({
-			open: false,
-			beds: '',
-			rent_type: '',
-			desc: '',
-			chars_left: 180,
-			fileList: [],
-			amount: '',
-			baths: '',
-			furnished: '',
+      open: false,
+      beds: '',
+      rent_type: '',
+      desc: '',
+      chars_left: 180,
+      fileList: [],
+      amount: '',
+      baths: '',
+      furnished: '',
       county: '',
-			images: [],
-			ipfs: '',
-			txHash: [],
+      town: '',
+      images: [],
+      ipfs: '',
+      txHash: [],
       color: 'green',
       disableButton: false,
-      
 		});
 	};
+  
+  currentTime = () => {
+    var date = new Date(); 
+    var options = {
+        year: "numeric",
+        month: "2-digit",
+        day: "numeric"
+    };
+    var time = date.toLocaleDateString('eu-ES', options);
+    
+    return time;
+  }
+
+  
+  handleTime = (event) => {
+    
+    var inputDate = new Date(event.target.value).getTime() / 1000;
+    console.log(inputDate);
+    
+    var getDate = new Date();
+    var currentDate = getDate.getTime() / 1000;
+    
+    if(inputDate < currentDate ){
+      var options = {
+          year: "numeric",
+          month: "2-digit",
+          day: "numeric"
+      };
+      var time = getDate.toLocaleDateString('eu-ES', options);
+      event.target.value = time;
+    }
+    
+    
+    
+  }
 	
 	handleWordCount = (event) => {
 		const charCount = event.target.value.length;
@@ -306,7 +344,7 @@ class SimpleModal extends Component {
 		this.setState({ desc: event.target.value});
 	}
 	
-	handleUpload = async (event) => {
+	handleFiles = async (event) => {
 		var files = [...event.target.files]
     if(files.length >= 5){
       files = files.slice(0,5);
@@ -329,7 +367,7 @@ class SimpleModal extends Component {
 		//console.log(this.state.fileList);
 	}
 
-	handleDeploy = async () => {
+	handleUploadIPFS = async () => {
     this.state.disableButton = true;
 		const details = {
 			beds: this.state.beds,
@@ -426,8 +464,8 @@ class SimpleModal extends Component {
 							<Grid item >
 								{this.TextField_(rent_type, "Rental Type", "rent_type")}
 							</Grid>
+              {/* AMOUNT */}
 							<Grid item >
-								{/* AMOUNT */}
                   <TextField
                     id="outlined-adornment-amount"
                     className={classes.textField}
@@ -446,14 +484,21 @@ class SimpleModal extends Component {
                     }}
                   />
 							</Grid>
+              {/* END DATE */}
               <Grid item>
                 <TextField
                   id="outlined-helperText"
+                  type="date"
                   helperText="End Date"
                   margin="dense"
+                  onChange={this.handleTime}
                   variant="outlined"
+                  className={classes.textField}
                   style={{width: "180px"}}
-                  type="date"
+                  defaultValue={this.currentTime()}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
               </Grid>
 						</Grid>
@@ -464,6 +509,7 @@ class SimpleModal extends Component {
 							<Grid item >
 								{this.TextField_(furnished, "Furnishing", "furnished")}
 							</Grid>
+              {/* TOWN/CITY */}
               <Grid item>
                 <TextField
                   id="outlined-helperText"
@@ -473,13 +519,14 @@ class SimpleModal extends Component {
                   style={{width: "180px"}}
                 />
               </Grid>
+              {/* COUNTY */}
               <Grid item>
                 {this.TextField_(counties, "County", "county", "180px")}
               </Grid>
 						</Grid>
+            {/* DESCRIPTION */}
 						<Grid container justify="flex-start" className={classes.root}>
 							<div>
-								{/* DESCRIPTION */}
 								<TextField
 									placeholder="Description"
 									multiline={true}
@@ -495,6 +542,7 @@ class SimpleModal extends Component {
 								/>
 							</div>
 						</Grid>
+            {/* IMAGE FILE NAMES */}
 						<Grid container className={classes.root}>
 							<div>
 								{this.state.fileList.map(option => (
@@ -505,7 +553,7 @@ class SimpleModal extends Component {
 							</div>
 						</Grid>
 						<Grid style={{marginTop: '5px'}} container className={classes.root} spacing={16}>
-							{/* UPLOAD */}
+							{/* SELECT IMAGES*/}
 							<Grid item>
 								<div>
 									<input
@@ -515,10 +563,10 @@ class SimpleModal extends Component {
 										multiple
 										type="file"
 										style={{ display: 'none' }}
-										onChange={this.handleUpload.bind(this)}
+										onChange={this.handleFiles.bind(this)}
 									/>
 									<label htmlFor="flat-button-file">
-                  <MuiThemeProvider theme={grey_theme}>
+                  <MuiThemeProvider theme={green_theme}>
 										<Button  color="primary" variant="outlined" component="span" className={classes.button}>
 											Select Images
 										</Button>
@@ -526,9 +574,10 @@ class SimpleModal extends Component {
 									</label>
 								</div>
 							</Grid>
+              {/* DEPLOY BUTTON */}
 							<Grid item>
-								<MuiThemeProvider theme={green_theme}>
-									<Button onClick={this.handleDeploy} disabled={this.state.disableButton} color="primary" variant="outlined" component="span" className={classes.button}>
+								<MuiThemeProvider theme={blue_theme}>
+									<Button onClick={this.handleUploadIPFS} disabled={this.state.disableButton} color="primary" variant="outlined" component="span" className={classes.button}>
 										Deploy
 									</Button>
 								</MuiThemeProvider>

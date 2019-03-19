@@ -31,6 +31,10 @@
   }
 }
 
+body{
+  width: 100%;
+}
+
 .Auction-card {
 	width: 300px;
 	max-width: 300px;

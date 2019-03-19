@@ -11,6 +11,8 @@ import SearchIcon from '@material-ui/icons/Search';
 import InputBase from '@material-ui/core/InputBase';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 
+import Fuse from 'fuse.js';
+
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -74,7 +76,7 @@ const styles = theme => ({
   }
 });
 
-const green_theme = createMuiTheme({
+const appBar_theme = createMuiTheme({
 	palette: {
 		primary: {
 			main: '#fafafa',
@@ -87,15 +89,63 @@ const green_theme = createMuiTheme({
 
 class ButtonAppBar extends React.Component {
   
+  search = () => {
+    let options = {
+      shouldSort: true,
+      tokenize: true,
+      maxPatternLength: 30,
+      minMatchCharLength: 1,
+      keys: [
+        {
+          name: 'address',
+          weight: 0.125
+        },          
+        {
+          name: 'town',
+          weight: 0.125
+        },         
+        {
+          name: 'bed',
+          weight: 0.125
+        }, 
+        {
+          name: 'bath',
+          weight: 0.125
+        }, 
+        {
+          name: 'rent_type',
+          weight: 0.125
+        }, 
+        {
+          name: 'desc',
+          weight: 0.125
+        },
+        {
+          name: 'furnished',
+          weight: 0.125
+        },
+      ]
+
+    };
+    let fuse = new Fuse(this.props.searchables, options);
+    return fuse;
+  }
+  
+  handleSearch = (event) =>{
+    let fuse = this.search();
+    console.log(fuse);
+  }
+  
   click = () => {
     this.props.sort();
+    console.log();
   }
   
 	render() {
 		const { classes,web3} = this.props;
 		return (
 			<div className={classes.root}>
-				<MuiThemeProvider theme={green_theme}>
+				<MuiThemeProvider theme={appBar_theme}>
 					<AppBar style={{boxShadow: "none"}} position="absolute">
 						<Toolbar>
               <Typography style={{pointerEvents: 'none',fontWeight: 'bold', fontColor: '#1E1E1E'}} className={classes.title} variant="h4" color="inherit">
@@ -113,6 +163,7 @@ class ButtonAppBar extends React.Component {
                       root: classes.inputRoot,
                       input: classes.inputInput,
                     }}
+                    onChange={this.handleSearch}
                   />
                 </div>
               </div>

@@ -18,15 +18,7 @@ const styles = theme => ({
   },
 });
 
-class SimpleTable extends React.Component {
-  
-  state = {
-    data: this.props.data
-  }
-  
-  componentDidMount = () => {
-    console.log(this.props);
-  }
+class BidTable extends React.Component {
   
   EmptyLog = () => {
     return(
@@ -45,7 +37,7 @@ class SimpleTable extends React.Component {
   }
   
   displayEmpty = () => {
-    if(this.state.data.length !== 0){
+    if(this.props.data.length !== 0){
       return {
         display: 'none',
         width: 398, 
@@ -65,7 +57,7 @@ class SimpleTable extends React.Component {
       <div className={classes.tableWrapper}>
         <Table padding="dense" className={classes.table}>
           <TableBody>
-            {this.state.data.map( (row,x) => (
+            {this.props.data.map( (row,x) => (
               <TableRow key={"t"+x}>
                 <TableCell  component="th" scope="row">
                   {"Ξ " + row[1] + " (€" + (row[1] * this.props.ex).toFixed(2)+")"}
@@ -83,8 +75,8 @@ class SimpleTable extends React.Component {
   }
 }
 
-SimpleTable.propTypes = {
+BidTable.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(SimpleTable);
+export default withStyles(styles)(BidTable);
