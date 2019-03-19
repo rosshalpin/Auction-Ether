@@ -2,11 +2,10 @@ import Web3 from "web3";
 const HDWalletProvider = require('truffle-hdwallet-provider');
 
 let web3 = null;
-const test = true;
+const test = false;
 
 
 class web3API {
-
   constructor(api){
     this.api = this.enable();
   }
@@ -30,7 +29,7 @@ class web3API {
 				.then(result => result);
   }
   
-  static async getIPFS(auction){
+  static async getHash(auction){
     return await auction.methods
       .ipfsHash()
       .call({ from: web3.eth.getAccounts[0] })
