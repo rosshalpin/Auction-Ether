@@ -49,11 +49,10 @@ export class App extends Component {
           var auctionIPFS = await web3API.getHash(auction);
           
           //ipfs api call
-          let nAuction = await ipfsAPI.get(auctionIPFS, address, auction, contract);
+          let nAuction = await ipfsAPI.get(auctionIPFS, address, auction);
           await this.setState({
             auctions: [...this.state.auctions, nAuction]
           }) 
-          //console.log(nAuction);
         }
       } catch (e) {
         console.log(e);
@@ -98,7 +97,7 @@ export class App extends Component {
         <div className="App">         
           <AppBar web3={web3} searchables={this.state.auctions} contract={contract}  sort={this.handleSort} ex={this.state.exchange} />
           <Grid style={{ marginTop: "85px"}} container justify="center" >
-            {this.state.auctions.map((content, x) => <AuctionCard key={content.address} data={content} ex={this.state.exchange} web3={web3}/>
+            {this.state.auctions.map((content, x) => <AuctionCard key={content.scanAddress} data={content} ex={this.state.exchange} web3={web3}/>
             )}
           </Grid>         
         </div>

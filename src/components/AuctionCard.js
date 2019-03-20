@@ -70,6 +70,7 @@ const styles = theme => ({
 });
 
 export class AuctionCard extends  Component {
+  _isMounted = false
   
 	state = {
 		images: this.props.data.media.images,
@@ -82,7 +83,6 @@ export class AuctionCard extends  Component {
     open: false,
     auctionFunc: this.props.data.auctionFunc,
     web3: this.props.web3,
-    creator: null,
     bidAmount: 0,
     biddingLog: [],
     hasBalance: false,
@@ -90,39 +90,34 @@ export class AuctionCard extends  Component {
     media: this.props.data.media,
 	}
   
-  componentDidMount = () => {
-    
-    this.handleContract();
-    this.handleBidderLog();
-    this.handleBalanceOf();
-    
+  componentDidMount = () => { 
+    this._isMounted = true;  
     setInterval(async()=>{
       await this.handleBidderLog();
       await this.handleBalanceOf();
     }, 1000);
   }
   
-  handleContract = async() => {
-    const {auctionFunc, web3} = this.state;
-    const accounts = await web3.eth.getAccounts();
-    var auctionSeller = await auctionFunc.methods
-      .auctionSeller()
-      .call({ from: accounts[0] })
-      .then(result => result);
-    //console.log(auctionFunc.methods);
-    this.setState({creator: auctionSeller});
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   handleOpen = () => {
-    this.setState({ open: true });
+    if (this._isMounted) {
+      this.setState({ open: true });
+    }
   };
 
   handleClose = () => {
-    this.setState({ open: false, bidAmount: 0  });
+    if (this._isMounted) {
+      this.setState({ open: false, bidAmount: 0  });
+    }
   };
   
   handleBid = async () => {
-    await this.setState({hasBalance: true});
+    if (this._isMounted) {
+      await this.setState({hasBalance: true});
+    }
     if(this.state.bidAmount > 0){
       const {auctionFunc, web3} = this.state;
       const accounts = await web3.eth.getAccounts();
@@ -134,7 +129,9 @@ export class AuctionCard extends  Component {
   }
   
   handleWithdraw = async () => {
-    await this.setState({withdrawDisabled: true});
+    if (this._isMounted) {
+      await this.setState({withdrawDisabled: true});
+    }
     const {auctionFunc, web3} = this.state;
     const accounts = await web3.eth.getAccounts();
     var withdraw = await auctionFunc.methods
@@ -159,12 +156,15 @@ export class AuctionCard extends  Component {
     var biddingLog = bidderLog.map(function(v,i) {
         return [v, web3.utils.fromWei(bidLog[i], 'ether')];
     });
-    
-    await this.setState({biddingLog: biddingLog});
+    if (this._isMounted) {
+      await this.setState({biddingLog: biddingLog});
+    }
   }
   
   handleBidAmount = async (event) => {
-    await this.setState({ bidAmount: event.target.value });
+    if (this._isMounted) {
+      await this.setState({ bidAmount: event.target.value });
+    }
   }
   
   handleBalanceOf = async () => {
@@ -174,23 +174,24 @@ export class AuctionCard extends  Component {
       .balanceOf(CurrentUserAddress[0])
       .call({ from: web3.eth.getAccounts[0] })
       .then(result => result);
-
-    if(balance > 0){
-      await this.setState({hasBalance: true});
-    }else{
-      await this.setState({hasBalance: false});
+    if (this._isMounted) {
+      if(balance > 0){
+        await this.setState({hasBalance: true});
+      }else{
+        await this.setState({hasBalance: false});
+      }
     }
     var highestBidder = await auctionFunc.methods
       .highestBidder()
       .call({ from: web3.eth.getAccounts[0] })
       .then(result => result);
-    
-    if (balance > 0 && CurrentUserAddress[0] !== highestBidder){
-      await this.setState({withdrawDisabled: false});
-    }else{
-      await this.setState({withdrawDisabled: true});
+    if (this._isMounted) {
+      if (balance > 0 && CurrentUserAddress[0] !== highestBidder){
+        await this.setState({withdrawDisabled: false});
+      }else{
+        await this.setState({withdrawDisabled: true});
+      }
     }
-
   }
   
   AuctionModal = () => {
@@ -282,7 +283,7 @@ export class AuctionCard extends  Component {
                 })}
               </Grid>
               <Grid item>
-                <Chip color="primary" href={"https://rinkeby.etherscan.io/address/"+this.props.data.address} variant="outlined" key={"address"} label={this.props.data.address} clickable component="a" className={classes.chip} />
+                <Chip color="primary" href={"https://rinkeby.etherscan.io/address/"+this.props.data.scanAddress} variant="outlined" key={"address"} label={this.props.data.scanAddress} clickable component="a" className={classes.chip} />
               </Grid>
               <Grid item>
                 <TextField

@@ -8,7 +8,7 @@ class ipfsAPI {
     return ipfs;
   }
 
-  static get(auctionIPFS, address, auction, contract){
+  static get(auctionIPFS, address, auction){
     return new Promise((resolve, reject) => {
       request("https://gateway.ipfs.io/ipfs/" + auctionIPFS, { json: true }, (err, res, body) => {
         if (err) {
@@ -16,9 +16,8 @@ class ipfsAPI {
         } else {
           var nAuction = {
             media: body,
-            address: address,
+            scanAddress: address,
             auctionFunc: auction,
-            contract: contract,
           };
           resolve(nAuction);
         }

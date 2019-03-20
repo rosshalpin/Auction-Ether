@@ -10,6 +10,15 @@ import Tooltip from '@material-ui/core/Tooltip';
 import SearchIcon from '@material-ui/icons/Search';
 import InputBase from '@material-ui/core/InputBase';
 import { fade } from '@material-ui/core/styles/colorManipulator';
+import Grid from '@material-ui/core/Grid';
+
+import AuctionCard from "./AuctionCard.js";
+
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 import Fuse from 'fuse.js';
 
@@ -89,62 +98,109 @@ const appBar_theme = createMuiTheme({
 
 class ButtonAppBar extends React.Component {
   
-  search = () => {
+  state = {
+    result: [],
+    open: false,
+  }
+  
+  searchInit = () => {
     let options = {
       shouldSort: true,
       tokenize: true,
-      maxPatternLength: 30,
+      maxPatternLength: 50,
       minMatchCharLength: 1,
       keys: [
         {
-          name: 'address',
+          name: 'scanAddress',
           weight: 0.125
         },          
         {
-          name: 'town',
+          name: 'media.town',
           weight: 0.125
         },         
         {
-          name: 'bed',
+          name: 'media.beds',
           weight: 0.125
         }, 
         {
-          name: 'bath',
+          name: 'media.baths',
           weight: 0.125
         }, 
         {
-          name: 'rent_type',
+          name: 'media.rent_type',
           weight: 0.125
         }, 
         {
-          name: 'desc',
+          name: 'media.desc',
           weight: 0.125
         },
         {
-          name: 'furnished',
+          name: 'media.furnished',
+          weight: 0.125
+        },
+        {
+          name: 'media.county',
           weight: 0.125
         },
       ]
-
     };
+   
     let fuse = new Fuse(this.props.searchables, options);
+    
     return fuse;
   }
   
   handleSearch = (event) => {
-    let fuse = this.search();
-    console.log(fuse);
+
+    if(event.target.value !== '' && event.key === 'Enter'){
+      let fuse = this.searchInit();
+      let result = fuse.search(event.target.value);
+      console.log(result);
+      this.setState({result: result})
+      this.handleClickOpen();
+    }
+
   }
   
   click = () => {
     this.props.sort();
-    console.log();
+  }
+  
+  handleClickOpen = () => {
+    this.setState({ open: true});
+  };
+
+  handleClose = () => {
+    this.setState({ open: false });
+  };
+  
+  SearchModal = () =>{
+    return (
+      <div>
+        <Dialog
+          open={this.state.open}
+          onClose={this.handleClose}
+          scroll={"body"}
+          aria-labelledby="scroll-dialog-title"
+        >
+          <DialogContent>
+            <Grid container justify="center" >
+              {this.state.result.map((content, x) => 
+                <AuctionCard key={content.scanAddress} data={content} ex={this.props.ex} web3={this.props.web3}/>
+              )}
+            </Grid>
+          </DialogContent>
+
+        </Dialog>
+      </div>
+    );
   }
   
 	render() {
 		const { classes,web3} = this.props;
 		return (
 			<div className={classes.root}>
+      {this.SearchModal()}
 				<MuiThemeProvider theme={appBar_theme}>
 					<AppBar style={{boxShadow: "none"}} position="absolute">
 						<Toolbar>
@@ -163,7 +219,8 @@ class ButtonAppBar extends React.Component {
                       root: classes.inputRoot,
                       input: classes.inputInput,
                     }}
-                    onChange={this.handleSearch}
+                    
+                    onKeyUp={this.handleSearch}
                   />
                 </div>
               </div>
