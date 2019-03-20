@@ -88,6 +88,8 @@ export class AuctionCard extends  Component {
     hasBalance: false,
     withdrawDisabled: true,
     media: this.props.data.media,
+    county: this.props.data.media.county,
+    town: this.props.data.media.town,
 	}
   
   componentDidMount = () => { 
@@ -321,6 +323,28 @@ export class AuctionCard extends  Component {
       fontSize: '80%'
     }
     
+    let townStyle = {
+      color: 'white',
+      position: 'absolute', 
+      zIndex: 1, 
+      pointerEvents: 'none',
+      top: '25px',
+      left: '10px',
+      textShadow: '1px 1px 2px rgba(0,0,0,1)',
+      fontSize: '80%'
+    }
+    
+    let countyStyle = {
+      color: 'white',
+      position: 'absolute', 
+      zIndex: 1, 
+      pointerEvents: 'none',
+      top: '10px',
+      left: '10px',
+      textShadow: '1px 1px 2px rgba(0,0,0,1)',
+      fontSize: '80%'
+    }
+    
     let priceStyle = {
       color: 'white',
       position: 'absolute', 
@@ -334,6 +358,12 @@ export class AuctionCard extends  Component {
 		return(
     <div>
 			<Card style={{position: 'relative', borderRadius: '2px'}} className="Auction-card">
+        <Typography style={townStyle}>
+          {this.state.town}  
+        </Typography>
+        <Typography style={countyStyle}>
+          {this.state.county}  
+        </Typography>
         <Typography style={headerStyle}>
           {this.state.rent_type}  
         </Typography>

@@ -101,6 +101,7 @@ class ButtonAppBar extends React.Component {
   state = {
     result: [],
     open: false,
+    empty: null,
   }
   
   searchInit = () => {
@@ -156,6 +157,11 @@ class ButtonAppBar extends React.Component {
       let fuse = this.searchInit();
       let result = fuse.search(event.target.value);
       console.log(result);
+      if(result.length < 1){
+        this.setState({empty: true})
+      }else{
+        this.setState({empty: false})
+      }
       this.setState({result: result})
       this.handleClickOpen();
     }
@@ -174,6 +180,14 @@ class ButtonAppBar extends React.Component {
     this.setState({ open: false });
   };
   
+  EmptySearch = () => {
+    if(this.state.empty){
+      return(<div>{"No Results"}</div>);
+    }else{
+      return null;
+    }
+  }
+  
   SearchModal = () =>{
     return (
       <div>
@@ -184,7 +198,9 @@ class ButtonAppBar extends React.Component {
           aria-labelledby="scroll-dialog-title"
         >
           <DialogContent>
+            
             <Grid container justify="center" >
+              {this.EmptySearch()}
               {this.state.result.map((content, x) => 
                 <AuctionCard key={content.scanAddress} data={content} ex={this.props.ex} web3={this.props.web3}/>
               )}
