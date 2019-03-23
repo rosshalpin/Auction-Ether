@@ -82,6 +82,10 @@ const styles = theme => ({
   },
   searchContainer: {
     position: 'relative',
+  },
+  paper: {
+    width: "fit-content",
+    maxWidth: "700px" 
   }
 });
 
@@ -137,11 +141,11 @@ class ButtonAppBar extends React.Component {
         },
         {
           name: 'media.furnished',
-          weight: 0.125
+          weight: 0.12
         },
         {
           name: 'media.county',
-          weight: 0.125
+          weight: 0.4
         },
       ]
     };
@@ -189,6 +193,7 @@ class ButtonAppBar extends React.Component {
   }
   
   SearchModal = () =>{
+    const { classes} = this.props;
     return (
       <div>
         <Dialog
@@ -196,10 +201,14 @@ class ButtonAppBar extends React.Component {
           onClose={this.handleClose}
           scroll={"body"}
           aria-labelledby="scroll-dialog-title"
+          
+          classes={{
+              paper: classes.paper,
+            }}
         >
-          <DialogContent>
+          <DialogContent >
             
-            <Grid container justify="center" >
+            <Grid container  justify="center" >
               {this.EmptySearch()}
               {this.state.result.map((content, x) => 
                 <AuctionCard key={content.scanAddress} data={content} ex={this.props.ex} web3={this.props.web3}/>

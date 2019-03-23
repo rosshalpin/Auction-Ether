@@ -541,7 +541,7 @@ class SimpleModal extends Component {
 						<Grid container justify="flex-start" className={classes.root}>
 							<div>
 								<TextField
-									placeholder="Description"
+									placeholder="description, contact details... etc."
 									multiline={true}
 									rows={3}
 									style = {{width: '648px'}}

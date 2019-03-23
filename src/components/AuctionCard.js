@@ -275,18 +275,7 @@ export class AuctionCard extends  Component {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid container style={{paddingLeft:'10px'}} alignItems="center">
-              <Grid item>
-                {Object.entries(this.state.media).map((row,x) =>{
-                  if(row[0] !== "images" && row[0] !== "amount" && row[0] !== "desc"){
-                    return(<Chip variant="outlined" key={"t"+x} label={row[1]} className={classes.chip} />);
-                  }
-                  return null
-                })}
-              </Grid>
-              <Grid item>
-                <Chip color="primary" href={"https://rinkeby.etherscan.io/address/"+this.props.data.scanAddress} variant="outlined" key={"address"} label={this.props.data.scanAddress} clickable component="a" className={classes.chip} />
-              </Grid>
+            <Grid container style={{paddingLeft:'10px'}} alignItems="center">             
               <Grid item>
                 <TextField
                   placeholder="Description"
@@ -304,6 +293,17 @@ export class AuctionCard extends  Component {
                     }
                   }}
                 />
+              </Grid>
+              <Grid item>
+                {Object.entries(this.state.media).map((row,x) =>{
+                  if(row[0] !== "images" && row[0] !== "amount" && row[0] !== "desc"){
+                    return(<Chip variant="outlined" key={"t"+x} label={row[1]} className={classes.chip} />);
+                  }
+                  return null
+                })}
+              </Grid>
+              <Grid item>
+                <Chip color="primary" href={"https://rinkeby.etherscan.io/address/"+this.props.data.scanAddress} variant="outlined" key={"address"} label={this.props.data.scanAddress} clickable component="a" className={classes.chip} />
               </Grid>
             </Grid>
         </div>
