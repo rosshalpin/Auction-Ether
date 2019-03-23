@@ -3,12 +3,7 @@ pragma solidity ^0.4.25;
 /// @author Ross Halpin
 /// @notice This contract is for the creation of an Auction
 
-interface Ledger{
-  function addAddress(address auctionAddress) external;
-}
-
 contract Auction {
-    Ledger public auctionLedger;
     
     address public auctionManager;
     address public auctionSeller;
@@ -28,12 +23,10 @@ contract Auction {
         
     constructor(uint _initialValue, uint _auctionEnd, string _ipfsHash) public payable {
         require(msg.value >= 0.0001 ether, "You must pay the advertisement fee");
-        require(_auctionEnd >= now + 1 weeks, "You must pay the advertisement fee");
-        auctionLedger = Ledger(0x9d7c1161d3726313627bc4cdfa0c7acbc87efed5);
-        auctionLedger.addAddress(this);
+        require(_auctionEnd >= now + 1 weeks, "auction end must be greater than now + 1 week");
         
-        auctionManager = 0xe3E36c15027Be15AEaBF2a71F6920a9429aa8937;
-        //auctionManager = 0x14723A09ACff6D2A60DcdF7aA4AFf308FDDC160C;
+        //auctionManager = 0xe3E36c15027Be15AEaBF2a71F6920a9429aa8937;
+        auctionManager = 0x14723A09ACff6D2A60DcdF7aA4AFf308FDDC160C;
         
         auctionManager.transfer(msg.value);
         auctionSeller = msg.sender;
@@ -41,9 +34,10 @@ contract Auction {
         auctionBegin = now;
         
         initialValue = _initialValue * 1 ether; // Converting ether base 10 value to wei.
-        minIncrementValue =  1 ether;
+        minIncrementValue =  100000000000000 wei;
         ipfsHash = _ipfsHash;
     }
+    
     
     function withdrawBid() external payable {
         require(msg.sender != highestBidder);
@@ -51,10 +45,10 @@ contract Auction {
         balanceOf[msg.sender] = 0;  // Balance must be set to zero before transfer
         msg.sender.transfer(amount);
     }
-
+    
     function placeBid() external payable {
         require(balanceOf[msg.sender] == 0, "You must withdraw your previous bid");
-        require(msg.value >= initialValue, "Reserve value has not been met");
+        require(msg.value+balanceOf[highestBidder] >= initialValue, "Reserve value has not been met");
         require(msg.value >= balanceOf[highestBidder]+minIncrementValue, "Minimum increment not met");
         require(now < auctionEnd, "auction has ended");
         
@@ -78,6 +72,10 @@ contract Auction {
   
     function getBidLog() external view returns(uint[]){
         return bidLog;
+    }
+    
+    function getBalance() external view returns(uint){ // for testing purposes
+        return balanceOf[msg.sender];
     }
       
     function destroy() external {
