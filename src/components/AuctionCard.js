@@ -93,14 +93,18 @@ export class AuctionCard extends  Component {
     seller: '',
     highestBid: 0,
     ended: false,
+    daysLeft: 0,
+    hoursLeft: 0 ,
 	}
   
   componentDidMount = () => { 
     this._isMounted = true; 
     this.handleSeller();
     setInterval(async()=>{
+      await this.handleTimeLeft();
       await this.handleBidderLog();
       await this.handleBalanceOf();
+      
     }, 1000);
   }
   
@@ -166,9 +170,17 @@ export class AuctionCard extends  Component {
     var highestBid = await auctionFunc.methods
       .highestBid()
       .call({ from: web3.eth.getAccounts[0] })
-      .then(result => result);
-      
-      
+      .then(result => result);        
+     
+    if (this._isMounted) {
+      await this.setState({biddingLog: biddingLog});
+      await this.setState({highestBid: highestBid});
+
+    }
+  }
+  
+  handleTimeLeft = async () => {
+    const {auctionFunc, web3} = this.state;
     var getDate = new Date();
     var currentDate = getDate.getTime() / 1000;
     
@@ -177,12 +189,16 @@ export class AuctionCard extends  Component {
       .call({ from: web3.eth.getAccounts[0] })
       .then(result => result);
       
+    var timeLeft = (auctionEnd - currentDate) / 86400;
+    let days = Math.floor(timeLeft);
+    let hours = (timeLeft % 1 * 24).toFixed(2);
+     
     if (this._isMounted) {
-      await this.setState({biddingLog: biddingLog});
-      await this.setState({highestBid: highestBid});
-      
+      await this.setState({daysLeft: days}); 
+      await this.setState({hoursLeft: hours});
+
       if(currentDate > auctionEnd){
-        this.setStat({ended: true});
+        this.setState({ended: true});
       }
     }
   }
@@ -212,7 +228,7 @@ export class AuctionCard extends  Component {
       .call({ from: web3.eth.getAccounts[0] })
       .then(result => result);
     if (this._isMounted) {
-      if(balance > 0){
+      if(balance > 0 || this.state.ended === true){
         await this.setState({hasBalance: true});
       }else{
         await this.setState({hasBalance: false});
@@ -238,7 +254,7 @@ export class AuctionCard extends  Component {
       marginLeft: "-15px",
       marginRight: "-10px"
     }
-    return(
+    return(   
       <Modal
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
@@ -402,6 +418,16 @@ export class AuctionCard extends  Component {
       textShadow: '1px 1px 2px rgba(0,0,0,1)',
       fontSize: '80%'
     }
+    
+    let daysStyle = {
+      color: 'white',
+      position: 'absolute', 
+      zIndex: 1, 
+      top: '10px',
+      right: '10px',
+      textShadow: '1px 1px 2px rgba(0,0,0,1)',
+      fontSize: '80%'
+    }
 
 		return(
     <div>
@@ -414,6 +440,9 @@ export class AuctionCard extends  Component {
         </Typography>
         <Typography style={headerStyle}>
           {this.state.rent_type}  
+        </Typography>
+        <Typography style={daysStyle}>
+          {this.state.daysLeft + " days " + this.state.hoursLeft+" hours"}  
         </Typography>
         <Tooltip placement="top" title="Ether (Euro)">
           <Typography style={priceStyle}>
