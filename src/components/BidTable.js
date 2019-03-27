@@ -34,6 +34,14 @@ class BidTable extends React.Component {
     );
   }
   
+  handleColor = (x) => {
+    if(x=== 0){
+      return 'green';
+    }else{
+      return 'black';
+    }
+  }
+  
   displayEmpty = () => {
     if(this.props.data.length !== 0){
       return {
@@ -56,15 +64,14 @@ class BidTable extends React.Component {
         <Table padding="dense" className={classes.table}>
           <TableBody>
             {this.props.data.map( (row,x) => (
-              <TableRow key={"t"+x}>
-                <TableCell  component="th" scope="row">
+              <TableRow  key={"t"+x}>
+                <TableCell style={{color: this.handleColor(x)}}  component="th" scope="row">
                   {"Ξ " + row[1] + " (€" + (row[1] * this.props.ex).toFixed(2)+")"}
                   <br/>
                   {row[0]}
                 </TableCell>
               </TableRow>
-            ))}
-            
+            ))}           
           </TableBody>
         </Table>
         {this.EmptyLog()}

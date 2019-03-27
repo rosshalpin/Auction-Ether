@@ -10,8 +10,11 @@ class ipfsAPI {
 
   static get(auctionIPFS, address, auction){
     return new Promise((resolve, reject) => {
+      // https://gateway.ipfs.io/ipfs/
+      // https://ipfs.infura.io/ipfs/
       request("https://gateway.ipfs.io/ipfs/" + auctionIPFS, { json: true }, (err, res, body) => {
         if (err) {
+          console.log(err);
           reject(err);
         } else {
           var nAuction = {
@@ -19,6 +22,7 @@ class ipfsAPI {
             scanAddress: address,
             auctionFunc: auction,
           };
+          console.log(nAuction);
           resolve(nAuction);
         }
       });

@@ -24,11 +24,12 @@ export class App extends Component {
   constructor(props){
     super(props);
     this.handleExchange(this.props.exchangeAPI);
-    setInterval(async()=>{await this.handleContracts(this.getAddresses,this.props.web3API, this.props.ipfsAPI)}, 1000);
+    setInterval((()=>{this.handleContracts(this.getAddresses,this.props.web3API, this.props.ipfsAPI)}), 1000);
   }
   
   componentDidMount = async () => {
     this.setState({web3: new this.props.web3API().api})
+
   }
   
   handleExchange = async(exchangeAPI) =>{
@@ -37,11 +38,14 @@ export class App extends Component {
   }
 
   handleContracts = async (getAddresses, web3API, ipfsAPI) => {
+   
     let auctions = await web3API.getAuctions(contract.ledger);
-    let addresses = await getAddresses(auctions);
+
+    let addresses = await getAddresses(auctions);;
     if(addresses != null){
       try {
         for (let address of addresses) {
+          
           let auctionAbi = contract.interf;
           let auction = new this.state.web3.eth.Contract(JSON.parse(auctionAbi), address);
           
@@ -62,6 +66,7 @@ export class App extends Component {
   
   getAddresses = async (auctionArray) => {
     var auctions = await auctionArray;
+
     var oldAddresses = this.state.addresses.slice(0);
     this.setState({ addresses: auctions });
     var newAddresses = this.state.addresses.slice(0);

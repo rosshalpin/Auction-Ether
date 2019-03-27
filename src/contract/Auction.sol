@@ -3,7 +3,12 @@ pragma solidity ^0.4.25;
 /// @author Ross Halpin
 /// @notice This contract is for the creation of an Auction
 
+interface Ledger{
+  function addAddress(address auctionAddress) external;
+}
+
 contract Auction {
+    Ledger public auctionLedger;
     
     address public auctionManager;
     address public auctionSeller;
@@ -21,25 +26,39 @@ contract Auction {
     address[] private bidderLog; // Address at bidderLog[N] will have a corresponding bid value at bidLog[N]
     uint[] private bidLog;
         
-    constructor(uint _initialValue, uint _auctionEnd, string _ipfsHash) public payable {
-        require(msg.value >= 0.0001 ether, "You must pay the advertisement fee");
-        require(_auctionEnd >= now + 1 weeks, "auction end must be greater than now + 1 week");
+    constructor(string _initialValue, uint _auctionEnd, string _ipfsHash) public payable {
+        require(msg.value >= 0.0000001 ether, "You must pay the advertisement fee");
+        require(_auctionEnd >= now + 1 days, "auction end date must be greater than now + 1 day");
         
-        //auctionManager = 0xe3E36c15027Be15AEaBF2a71F6920a9429aa8937;
-        auctionManager = 0x14723A09ACff6D2A60DcdF7aA4AFf308FDDC160C;
+        auctionManager = 0xe3E36c15027Be15AEaBF2a71F6920a9429aa8937;
+        //auctionManager = 0x14723A09ACff6D2A60DcdF7aA4AFf308FDDC160C;
+        
+        auctionLedger = Ledger(0x9d7c1161d3726313627bc4cdfa0c7acbc87efed5);
+        auctionLedger.addAddress(this);
         
         auctionManager.transfer(msg.value);
         auctionSeller = msg.sender;
         auctionEnd = _auctionEnd;
         auctionBegin = now;
         
-        initialValue = _initialValue * 1 ether; // Converting ether base 10 value to wei.
-        minIncrementValue =  100000000000000 wei;
+        initialValue = stringToUint(_initialValue);
+        minIncrementValue =  100000000000 wei; //0.0000001 ether
         ipfsHash = _ipfsHash;
     }
     
+    function stringToUint(string s) internal pure returns (uint) {
+      bytes memory b = bytes(s);
+      uint result = 0;
+      for (uint i = 0; i < b.length; i++) { // c = b[i] was not needed
+          if (b[i] >= 48 && b[i] <= 57) {
+              result = result * 10 + (uint(b[i]) - 48); // bytes and int are not compatible with the operator -.
+          }
+      }
+      return result; // this was missing
+    }
     
-    function withdrawBid() external payable {
+    
+    function withdrawBid() external {
         require(msg.sender != highestBidder);
         uint amount = balanceOf[msg.sender]; // This is the balance to be withdrawn
         balanceOf[msg.sender] = 0;  // Balance must be set to zero before transfer
@@ -78,7 +97,7 @@ contract Auction {
         return balanceOf[msg.sender];
     }
       
-    function destroy() external {
+    function destroy() external { // for testing purposes
         require(msg.sender == auctionManager);
         selfdestruct(msg.sender);
     }

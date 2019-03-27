@@ -90,10 +90,14 @@ export class AuctionCard extends  Component {
     media: this.props.data.media,
     county: this.props.data.media.county,
     town: this.props.data.media.town,
+    seller: '',
+    highestBid: 0,
+    ended: false,
 	}
   
   componentDidMount = () => { 
-    this._isMounted = true;  
+    this._isMounted = true; 
+    this.handleSeller();
     setInterval(async()=>{
       await this.handleBidderLog();
       await this.handleBalanceOf();
@@ -126,7 +130,7 @@ export class AuctionCard extends  Component {
       await auctionFunc.methods
         .placeBid()
         .send({ from: accounts[0], value: web3.utils.toWei(this.state.bidAmount, 'ether') })
-        .then(result => result); 
+        .then(result => result).catch(function(e){});; 
     }
   }
   
@@ -158,14 +162,45 @@ export class AuctionCard extends  Component {
     var biddingLog = bidderLog.map(function(v,i) {
         return [v, web3.utils.fromWei(bidLog[i], 'ether')];
     });
+    
+    var highestBid = await auctionFunc.methods
+      .highestBid()
+      .call({ from: web3.eth.getAccounts[0] })
+      .then(result => result);
+      
+      
+    var getDate = new Date();
+    var currentDate = getDate.getTime() / 1000;
+    
+    var auctionEnd = await auctionFunc.methods
+      .auctionEnd()
+      .call({ from: web3.eth.getAccounts[0] })
+      .then(result => result);
+      
     if (this._isMounted) {
       await this.setState({biddingLog: biddingLog});
+      await this.setState({highestBid: highestBid});
+      
+      if(currentDate > auctionEnd){
+        this.setStat({ended: true});
+      }
     }
   }
   
-  handleBidAmount = async (event) => {
+  handleBidAmount = async (event) => { 
     if (this._isMounted) {
       await this.setState({ bidAmount: event.target.value });
+    }
+  }
+  
+  handleSeller = async () => {
+    const {auctionFunc, web3} = this.state;
+    var auctionSeller = await auctionFunc.methods
+      .auctionSeller()
+      .call({ from: web3.eth.getAccounts[0] })
+      .then(result => result);
+    if (this._isMounted) {
+      await this.setState({seller: auctionSeller});
     }
   }
   
@@ -234,6 +269,7 @@ export class AuctionCard extends  Component {
                       className={classes.textField}
                       label={"€ " + (this.props.ex * this.state.bidAmount).toFixed(2)}
                       margin="dense"
+                      type="number"
                       variant="outlined"
                       style={{width: "150px"}}
                       required onChange={this.handleBidAmount}
@@ -271,7 +307,7 @@ export class AuctionCard extends  Component {
                 </Grid>
                 {/* BIDDING LIST */}
                 <Grid style={{width: 400}} item>
-                  <BidTable data={this.state.biddingLog} ex={this.props.ex} />
+                  <BidTable data={this.state.biddingLog.slice(0).reverse()} ex={this.props.ex} />
                 </Grid>
               </Grid>
             </Grid>
@@ -304,6 +340,7 @@ export class AuctionCard extends  Component {
               </Grid>
               <Grid item>
                 <Chip color="primary" href={"https://rinkeby.etherscan.io/address/"+this.props.data.scanAddress} variant="outlined" key={"address"} label={this.props.data.scanAddress} clickable component="a" className={classes.chip} />
+                <Chip color="primary" href={"https://rinkeby.etherscan.io/address/"+this.state.seller} variant="outlined" key={"seller"} label="seller" clickable component="a" className={classes.chip} />
               </Grid>
             </Grid>
         </div>
@@ -311,6 +348,17 @@ export class AuctionCard extends  Component {
     );
   }
   
+  updatePrice = () => {
+    const {web3} = this.state;
+    let high = web3.utils.fromWei((this.state.highestBid).toString(), 'ether')
+    if(this.state.ended === true){
+      return (<>Ended</>)
+    }else if(this.state.highestBid > this.state.amount){
+      return (<>Ξ{high} (€{(parseFloat(high) * this.props.ex).toFixed(2)})</>)
+    }else{
+      return (<>Ξ{this.state.amount} (€{(this.state.amount * this.props.ex).toFixed(2)})</>)
+    }
+  }
 	render() {
     let headerStyle = {
       color: 'white',
@@ -369,7 +417,7 @@ export class AuctionCard extends  Component {
         </Typography>
         <Tooltip placement="top" title="Ether (Euro)">
           <Typography style={priceStyle}>
-            Ξ{this.state.amount} (€{(this.state.amount * this.props.ex).toFixed(2)})
+            {this.updatePrice()}
           </Typography>
         </Tooltip>
 				<CardActionArea onClick={this.handleOpen}>

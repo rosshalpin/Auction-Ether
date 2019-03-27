@@ -24,8 +24,9 @@ class web3API {
   }
   
   static async getAuctions(ledger) {
+    let acc = await web3.eth.getAccounts();
     return await ledger.methods.getAuctions()
-				.call({from: web3.eth.getAccounts[0]})
+				.call({from: acc[0]})
 				.then(result => result);
   }
   

@@ -15,7 +15,7 @@ contract AuctionLedger {
 	return auctions;
 	}
 		
-	function reset() external {
+	function reset() external { // for testing purposes
 	    require(msg.sender == creator);
 	    delete auctions;
 	}

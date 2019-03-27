@@ -8,7 +8,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Grid from '@material-ui/core/Grid';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import ipfs from '../api/ipfsAPI';
-import SnackBar from './SnackBar';
 import contract from "../contract.js";
 
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
@@ -338,20 +337,20 @@ class SimpleModal extends Component {
 		if(charLeft <= 0){
 			this.setState({ chars_left: 0, color: 'red'});
 			event.target.value = event.target.value.slice(0, 180);
-      
+	  
 		}else if(charLeft <= 20 && charLeft >=1){
-      this.setState({ chars_left: charLeft,color: 'orange'});
-    }else{
+	  this.setState({ chars_left: charLeft,color: 'orange'});
+	}else{
 			this.setState({ chars_left: charLeft,color: 'green'});
 		}
 		this.setState({ desc: event.target.value});
 	}
-	
+
 	handleFiles = async (event) => {
 		var files = [...event.target.files]
-    if(files.length >= 5){
-      files = files.slice(0,5);
-    }
+	if(files.length >= 5){
+	  files = files.slice(0,5);
+	}
 		var files_64 = []
 		try {
 			for(var file of files){
@@ -371,48 +370,51 @@ class SimpleModal extends Component {
 	}
 
 	handleUploadIPFS = async () => {
-    
-    if(this.state.date !== ''){
 
-      this.setState({ disableButton: true});
-      const details = {
-        beds: this.state.beds,
-        rent_type: this.state.rent_type,
-        desc: this.state.desc,
-        amount: this.state.amount,
-        baths: this.state.baths,
-        furnished: this.state.furnished,
-        images: this.state.images,
-        county: this.state.county,
-        town: this.state.town,
-      }
-      console.log(details);
+	  this.setState({ disableButton: true});
+	  const details = {
+		beds: this.state.beds,
+		rent_type: this.state.rent_type,
+		desc: this.state.desc,
+		amount: this.state.amount,
+		baths: this.state.baths,
+		furnished: this.state.furnished,
+		images: this.state.images,
+		county: this.state.county,
+		town: this.state.town,
+	  }
 
-      const buffer = await Buffer.from(JSON.stringify(details));
-      await ipfs.provider().add(buffer, (err, ipfsHash) => {
-        if(err){
-          console.log(err)
-        }else{
-          this.setState({ ipfsHash: ipfsHash[0].hash });
-          this.deployContract();
-          this.handleClose();
-        }
-      })
-
-    }
+	  const buffer = await Buffer.from(JSON.stringify(details));
+	  await ipfs.provider().add(buffer, (err, ipfsHash) => {
+		if(err){
+		  console.log(err)
+		}else{
+		  this.setState({ ipfsHash: ipfsHash[0].hash });
+		  this.deployContract();
+		}
+	  })
 	}
+  
+  handleAmount = (event) => {
+    if(event.target.value < 0){
+      event.target.value = 0;
+    }
+    this.setState({amount: event.target.value});
+  }
 	
   deployContract = async () => {
-		const web3 = await this.props.web3;
+    const web3 = await this.props.web3;
 		const accounts = await web3.eth.getAccounts();
 		const { interf, bytecode} = contract;
 		const result = await new web3.eth.Contract(JSON.parse(interf))
-			.deploy({ data: '0x'+ bytecode, arguments: [1,1,this.state.date,this.state.ipfsHash] })
-			.send({ gas: '2000000', value: web3.utils.toWei('0.0002', 'ether'), from: accounts[0] });
+			.deploy({ data: '0x'+ bytecode, arguments: [web3.utils.toWei(this.state.amount, 'ether'),this.state.date,this.state.ipfsHash] })
+			.send({ gas: '3000000', value: web3.utils.toWei('0.0002', 'ether'), from: accounts[0] }).catch(function(e){});
 		console.log('Contract deployed to', result.options.address);
 		var nHash = this.state.txHash;
 		nHash.push(result.options.address);
-		this.setState({ txHash: nHash});
+		await this.setState({ txHash: nHash});
+    this.handleClose();
+
 	}
 	
 	TextField_ = (obj, desc, id, width='120px') => {
@@ -452,9 +454,6 @@ class SimpleModal extends Component {
     }
 		return (
 		<div>
-			{this.state.txHash.map((hash, x) => {
-        return <SnackBar data={hash} key={"snack" + x}/>;
-      })}
 			<Button onClick={this.handleOpen} variant="outlined" color="inherit">Create Auction</Button>
 			<Modal
 				aria-labelledby="simple-modal-title"
@@ -482,8 +481,9 @@ class SimpleModal extends Component {
                     className={classes.textField}
                     variant="outlined"
                     placeholder="ETH"
+                    type="number"
                     value={this.state.amount}
-                    onChange={this.handleChange('amount')}
+                    onChange={this.handleAmount}
                     margin="dense"
                     helperText="Initial Price"
                     style={{ width: '180px'}}
