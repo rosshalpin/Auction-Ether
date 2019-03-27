@@ -5,6 +5,7 @@ import { withStyles, MuiThemeProvider, createMuiTheme } from '@material-ui/core/
 import Modal from './UploadModal.js';
 import IconButton from '@material-ui/core/IconButton';
 import SortIcon from '@material-ui/icons/Sort';
+import HelpIcon from '@material-ui/icons/PriorityHigh';
 import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
 import SearchIcon from '@material-ui/icons/Search';
@@ -16,6 +17,8 @@ import AuctionCard from "./AuctionCard.js";
 
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import Fuse from 'fuse.js';
 
 const styles = theme => ({
@@ -34,6 +37,10 @@ const styles = theme => ({
   sortButton: {
     position: 'absolute',
     right: 30
+  },
+  helpButton: {
+    position: 'absolute',
+    right: 100
   },
   search: {
     
@@ -102,6 +109,7 @@ class ButtonAppBar extends React.Component {
     result: [],
     open: false,
     empty: null,
+    openHelp: false,
   }
   
   searchInit = () => {
@@ -217,11 +225,51 @@ class ButtonAppBar extends React.Component {
     );
   }
   
+  handleHelpOpen = () => {
+    this.setState({ openHelp: true});
+  };
+  handleHelpClose = () => {
+    this.setState({ openHelp: false });
+  };
+  
+  HelpModal = () => {
+    return (
+      <div>
+        <Dialog
+          open={this.state.openHelp}
+          onClose={this.handleHelpClose}
+          scroll="body"
+          aria-labelledby="scroll-dialog-title"
+        >
+          <DialogTitle id="scroll-dialog-title">Installing Metamask and creating an Ether Wallet</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+            This platform requires <a href="https://metamask.io/">Metamask</a>. Acquiring an ether wallet 
+            is as simple as installing Metamask within your browser. This will generate a wallet for you. 
+            You can then select the "Rinkeby Test Network" from the drop down at the top of the viewer.
+            </DialogContentText>
+          </DialogContent>
+          <DialogTitle id="scroll-dialog-title">Acquiring testnet Ether from an Etherem Faucet</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+            You can request some testnet ether through the <a href="https://www.rinkeby.io/#faucet">Rinkeby Authenticated Faucet</a>. 
+            Simply follow the instructions, select "18.75/3 days" from the "Give me Ether" dropdown, then using the social media platform
+            of your choice from the list, post the address of youe first account within Metamask. Share this link to the faucet and you will
+            recieve 18.75 ether for use within the Rinkeby testnet. Ensure you have the correct address as you may not be able to request 
+            more ether for a period of 3 days. 
+            </DialogContentText>
+          </DialogContent>
+        </Dialog>
+      </div>
+    );
+  }
+  
 	render() {
 		const { classes,web3} = this.props;
 		return (
 			<div className={classes.root}>
       {this.SearchModal()}
+      {this.HelpModal()}
 				<MuiThemeProvider theme={appBar_theme}>
 					<AppBar style={{boxShadow: "none"}} position="absolute">
 						<Toolbar>
@@ -244,6 +292,11 @@ class ButtonAppBar extends React.Component {
                   />
                 </div>
               </div>
+              <Tooltip placement="bottom" title="Help">
+                <IconButton style={{border: '1px solid #B1B1B1'}} onClick={this.handleHelpOpen} className={classes.helpButton} color="inherit" aria-label="Menu">
+                  <HelpIcon />
+                </IconButton>
+              </Tooltip>
               <Tooltip placement="bottom" title="Sort Price">
                 <IconButton style={{border: '1px solid #B1B1B1'}} onClick={this.click} className={classes.sortButton} color="inherit" aria-label="Menu">
                   <SortIcon />
