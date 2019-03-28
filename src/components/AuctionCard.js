@@ -192,6 +192,10 @@ export class AuctionCard extends  Component {
     var timeLeft = (auctionEnd - currentDate) / 86400;
     let days = Math.floor(timeLeft);
     let hours = (timeLeft % 1 * 24).toFixed(2);
+    if(timeLeft < 0){
+      days = 0;
+      hours = 0;
+    }
      
     if (this._isMounted) {
       await this.setState({daysLeft: days}); 
