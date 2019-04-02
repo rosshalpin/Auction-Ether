@@ -2,7 +2,6 @@ import Web3 from "web3";
 const HDWalletProvider = require('truffle-hdwallet-provider');
 
 let web3 = null;
-const test = false;
 
 const _mnemonic = 'abstract holiday rule this panel actor winner distance example foam enlist visa'; //WERE_HIDING
 const _gateway = 'e70cae671d574f388d897d913ce0f5aa';  //WERE_HIDING
@@ -11,7 +10,7 @@ class web3API {
   constructor(api){
     this.api = this.enable();
   }
-  enable() {
+  enable(test = true) {
     if(test === true){
       const provider = new HDWalletProvider(
         _mnemonic,

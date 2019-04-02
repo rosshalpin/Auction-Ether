@@ -254,7 +254,7 @@ class ButtonAppBar extends React.Component {
             <DialogContentText>
             You can request some testnet ether through the <a href="https://www.rinkeby.io/#faucet">Rinkeby Authenticated Faucet</a>. 
             Simply follow the instructions, select "18.75/3 days" from the "Give me Ether" dropdown, then using the social media platform
-            of your choice from the list, post the address of youe first account within Metamask. Share this link to the faucet and you will
+            of your choice from the list, post the address of your first account within Metamask. Share this link to the faucet and you will
             recieve 18.75 ether for use within the Rinkeby testnet. Ensure you have the correct address as you may not be able to request 
             more ether for a period of 3 days. 
             </DialogContentText>

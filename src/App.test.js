@@ -1,13 +1,19 @@
 import React from "react";
 import { shallow, mount } from "enzyme";
-import App from "./App";
-import exchangeAPI from './api/exchangeAPI';
+import exchangeAPI from './__mocks__/exchangeAPI.js';
+import ipfsAPI from './__mocks__/ipfsAPI.js';
 
-describe("App components", () => {
-  it("should update correct state", async () => {
-    let wrapper = shallow(<App exchangeAPI={102} />);
-    //var t = await wrapper.instance().componentDidMount();
-    const spy = jest.spyOn(App.prototype, 'constructor');
-    console.log(spy);
-  });
+describe('Fetching', () => {
+
+	it('should fetch exchange rate', async() => {
+		let rate = await exchangeAPI();
+		expect(rate).toBeDefined();	
+	});
+
+	it('should return object', async() => {
+		let auction = await ipfsAPI();
+		expect(auction).toBeDefined();	
+	});
+
+
 });
