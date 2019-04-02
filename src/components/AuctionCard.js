@@ -190,11 +190,13 @@ export class AuctionCard extends  Component {
       .then(result => result);
       
     var timeLeft = (auctionEnd - currentDate) / 86400;
-    let days = Math.floor(timeLeft);
-    let hours = (timeLeft % 1 * 24).toFixed(2);
-    if(timeLeft < 0){
-      days = 0;
-      hours = 0;
+    
+    let days = 0;
+    let hours = 0;
+    
+    if(timeLeft > 0){
+      days = Math.floor(timeLeft);
+      hours = (timeLeft % 1 * 24).toFixed(2);
     }
      
     if (this._isMounted) {
