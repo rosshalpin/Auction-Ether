@@ -4,6 +4,8 @@ const HDWalletProvider = require('truffle-hdwallet-provider');
 let web3 = null;
 const test = false;
 
+const _mnemonic = 'abstract holiday rule this panel actor winner distance example foam enlist visa'; //WERE_HIDING
+const _gateway = 'e70cae671d574f388d897d913ce0f5aa';  //WERE_HIDING
 
 class web3API {
   constructor(api){
@@ -17,8 +19,13 @@ class web3API {
       );
       web3 = new Web3(provider);
     }else{
-      window.ethereum.enable();
-      web3 = new Web3(window.ethereum);
+      try{
+        window.ethereum.enable();
+        web3 = new Web3(window.ethereum);
+      }catch(e){
+
+      }
+      
     }
     return web3;
   }
